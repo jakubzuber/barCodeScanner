@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
         padding: 1,
     },
     topic: {
-        fontSize: 30,
+        fontSize: 20,
         fontWeight: '600',
         marginBottom: 20
     },

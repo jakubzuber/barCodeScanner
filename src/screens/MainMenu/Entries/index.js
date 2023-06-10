@@ -15,15 +15,15 @@ const Entries = () => {
 
     const { newOrders } = useSelector(selectNewOrders);
 
-    const OrderDetails = (ID) => {
-        navigation.navigate('EntriesDetails', {ID: ID});
+    const OrderDetails = (ID, KLIENT, NADAWCA) => {
+        navigation.navigate('EntriesDetails', {ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA});
     };
 
     return (
         <View style={styles.root} >
             <Text style={styles.topic} >PRZYJĘCIA</Text>
             {newOrders.map(order => (
-                <View style={styles.viewContainer} key={order.ID} onTouchEnd={() => OrderDetails(order.ID)} >
+                <View style={styles.viewContainer} key={order.ID} onTouchEnd={() => OrderDetails(order.ID, order.KLIENT, order.NADAWCA)} >
                     <View>
                         <Text style={styles.text} >{order.NADAWCA} // {order.KLIENT}</Text>
                         <Text style={styles.text} >{order.ILOSC} szt. // {order.WAGA}kg</Text>
@@ -35,7 +35,6 @@ const Entries = () => {
                     </View>
                 </View>
             ))}
-
         </View>
     );
 };

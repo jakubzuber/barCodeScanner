@@ -68,9 +68,19 @@ const getNewOrdersDetailsData = async ({idOrder}) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
-        SELECT * 
+        SELECT
+            ID,
+            PRZYJECIE_ID,
+            KOD_PRODUKTU,
+            NAZWA_PRODUKTU,
+            ILOSC,
+            WAGA,
+            PAKOWANIE,
+            UWAGI,
+            ROZBIEZNOSC,
+            ISNULL(ZESKANOWANE,0) ZESKANOWANE
         FROM PRZYJECIA_SZCZEGOLY
-        WHERE ID = ${idOrder}
+        WHERE PRZYJECIE_ID = ${idOrder}
         `)
         return data
     }

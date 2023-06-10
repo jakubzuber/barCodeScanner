@@ -28,7 +28,12 @@ const styles = StyleSheet.create({
 
     container_TERTIARY: {},
     text_TERTIARY: {
-        color: '#949292'
+        color: '#949292',
+    },
+
+    container_SCANNER: {
+        backgroundColor: '#296ff0',
+        width: 200,
     }
 })
 
