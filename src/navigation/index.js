@@ -8,6 +8,7 @@ import Entries from "../screens/MainMenu/Entries";
 import Inventory from "../screens/MainMenu/Inventory";
 import Removals from "../screens/MainMenu/Removals";
 import Transfers from "../screens/MainMenu/Transfers";
+import EntriesDetails from "../screens/MainMenu/Entries/EntriesDetails";
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +22,7 @@ const Navigation = () => {
                 <Stack.Screen name='Home' component={HomeScreen} />
                 <Stack.Screen name='NewPassword' component={NewPasswordScreen} />
                 <Stack.Screen name='Entries' component={Entries} />
+                <Stack.Screen name='EntriesDetails' component={EntriesDetails} />
                 <Stack.Screen name='Inventory' component={Inventory} />
                 <Stack.Screen name='Removals' component={Removals} />
                 <Stack.Screen name='Transfers' component={Transfers} />

@@ -15,7 +15,7 @@ const validateLogIn = async(USERNAME) => {
     }
     catch(error) {
         console.log(error)
-    }
+    };
 };
 
 const setNewPasswrod = async(data) => {
@@ -31,10 +31,57 @@ const setNewPasswrod = async(data) => {
     }
     catch(error) {
         console.log(error)
+    };
+};
+
+const getNewOrdersData = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        SELECT
+        K.NAZWA KLIENT,
+		PS.SKANY,
+        P.*   
+        FROM PRZYJECIA1 P  CROSS APPLY
+                        (
+                        SELECT TOP 1
+                        K.NAZWA
+                        FROM KLIENCI K
+                        WHERE K.ID = P.KLIENT_ID
+                        ) K CROSS APPLY 
+						(
+						SELECT 
+						ISNULL(SUM(PS.ZESKANOWANE),0) SKANY
+						FROM PRZYJECIA_SZCZEGOLY PS
+						WHERE PS.PRZYJECIE_ID = P.ID
+						) PS
+        WHERE OBSLUGA = 'Jakub Zuber'
+        `)
+        return data
     }
-}
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const getNewOrdersDetailsData = async ({idOrder}) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        SELECT * 
+        FROM PRZYJECIA_SZCZEGOLY
+        WHERE ID = ${idOrder}
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
 
 module.exports = {
     validateLogIn,
-    setNewPasswrod
+    setNewPasswrod,
+    getNewOrdersData,
+    getNewOrdersDetailsData
 };
