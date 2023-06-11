@@ -5,6 +5,8 @@ import { useEffect } from "react";
 import { styles } from './styled';
 import { useNavigation } from '@react-navigation/native';
 
+
+
 const Entries = () => {
     const navigation = useNavigation()
     const dispatch = useDispatch();

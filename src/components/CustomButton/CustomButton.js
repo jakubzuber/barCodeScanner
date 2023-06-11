@@ -30,11 +30,6 @@ const styles = StyleSheet.create({
     text_TERTIARY: {
         color: '#949292',
     },
-
-    container_SCANNER: {
-        backgroundColor: '#296ff0',
-        width: 200,
-    }
 })
 
 export default CustomButton;
