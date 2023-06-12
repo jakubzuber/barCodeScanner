@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, View, Text } from "react-native";
+import { useState, useEffect } from 'react';
+import CustomButton from '../../../../components/CustomButton/CustomButton';
+import { styles } from './styled';
 
-const barCodeScanner = () => {
+const CodeScanner = () => {
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(false);
     const [text, setText] = useState('Not yet scanned');
@@ -45,37 +47,14 @@ const barCodeScanner = () => {
         <View style={styles.container}>
             <View style={styles.barCodeBox} >
                 <BarCodeScanner
-                onBarCodeScanned={scanned ? undefined : handleBarCodeScanner}
-                style={{height: 400, width: 400}} />
+                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanner}
+                    style={{ height: 200, width: 350, justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+                    {scanned && <CustomButton text={"Skanuj"} type="SCAN" onPress={() => setScanned(false)} />}
+                </BarCodeScanner>
             </View>
-            <Text style={styles.container}>{data}</Text>
-
-            {scanned && <Button title={"Scan again?"} onPress={() => setScanned(false)} color='tomato' />}
+            <Text style={styles.container}>{text}</Text>
         </View>
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-
-    barCodeBox: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 300,
-        width: 300,
-        overflow: "hidden",
-        borderRadius: 30,
-        backgroundColor: 'tomato',
-    },
-    mainText: {
-        fontSize: 16,
-        margin: 20,
-    }
-});
-
-export default barCodeScanner;
+export default CodeScanner;

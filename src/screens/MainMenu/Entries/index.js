@@ -1,4 +1,4 @@
-import { Text, View } from "react-native"
+import { Text, View, SafeAreaView, FlatList } from "react-native"
 import { useDispatch, useSelector } from "react-redux";
 import { fetchNewOrders, selectNewOrders } from "./newOrderSlice";
 import { useEffect } from "react";
@@ -16,27 +16,35 @@ const Entries = () => {
     }, [dispatch]);
 
     const { newOrders } = useSelector(selectNewOrders);
+    console.log(newOrders)
 
     const OrderDetails = (ID, KLIENT, NADAWCA) => {
-        navigation.navigate('EntriesDetails', {ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA});
+        navigation.navigate('EntriesDetails', { ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA });
     };
 
     return (
         <View style={styles.root} >
             <Text style={styles.topic} >PRZYJĘCIA</Text>
-            {newOrders.map(order => (
-                <View style={styles.viewContainer} key={order.ID} onTouchEnd={() => OrderDetails(order.ID, order.KLIENT, order.NADAWCA)} >
-                    <View>
-                        <Text style={styles.text} >{order.NADAWCA} // {order.KLIENT}</Text>
-                        <Text style={styles.text} >{order.ILOSC} szt. // {order.WAGA}kg</Text>
-                        <Text style={styles.text} >{order.DANE_AUTA}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.text} >Skany:</Text>
-                        <Text style={styles.text} >{order.SKANY}/{order.ILOSC}</Text>
-                    </View>
-                </View>
-            ))}
+            <SafeAreaView>
+                <FlatList
+                    data={newOrders}
+                    renderItem={({ item }) => {
+                        return (
+                            <View style={styles.viewContainer} key={item.ID} onTouchEnd={() => OrderDetails(item.ID, item.KLIENT, item.NADAWCA)}>
+                                <View>
+                                    <Text style={styles.text} >{item.NADAWCA} - {item.KLIENT}</Text>
+                                    <Text style={styles.text} >{item.ILOSC} szt. / {item.WAGA} kg</Text>
+                                    <Text style={styles.text} >{item.DANE_AUTA}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.text} >Skany:</Text>
+                                    <Text style={styles.text} >{item.SKANY} / {item.ILOSC}</Text>
+                                </View>
+                            </View>
+                        );
+                    }}
+                />
+            </SafeAreaView>
         </View>
     );
 };

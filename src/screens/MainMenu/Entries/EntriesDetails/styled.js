@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     text: {
         fontSize: 15,
         color: 'white',
-        maxWidth: 300,
+        maxWidth: 250,
         padding: 1,
     },
     topic: {
@@ -21,17 +21,18 @@ export const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         backgroundColor: '#1b6bd3',
-        borderRadius: '3px solid',
+        borderRadius: 10,
         marginTop: 10,
-        width: 300,
+        width: 330,
         padding: 8,
         justifyContent: 'space-between'
     },
     container: {
         backgroundColor: '#fff',
+        textAlign: 'center'
     },
     barCodeBox: {
-        height: 300,
+        height: 200,
         width: 350,
         overflow: "hidden",
         borderRadius: 20,
@@ -40,5 +41,5 @@ export const styles = StyleSheet.create({
     mainText: {
         fontSize: 16,
         margin: 20,
-    }
+    },
 });

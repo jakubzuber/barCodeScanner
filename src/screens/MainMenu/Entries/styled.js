@@ -3,9 +3,8 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
-        justifyContent: 'center',
-        padding: 50,
-        marginTop: 30,
+        padding: 20,
+        marginTop: 40,
     },
     text: {
         fontSize: 15,
@@ -22,9 +21,9 @@ export const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         backgroundColor: '#1b6bd3',
-        width: 300,
-        borderRadius: '3px solid',
+        borderRadius: 10,
         marginTop: 10,
+        width: 330,
         padding: 8,
         justifyContent: 'space-between'
     },  
