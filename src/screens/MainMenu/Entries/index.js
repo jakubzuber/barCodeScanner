@@ -16,7 +16,6 @@ const Entries = () => {
     }, [dispatch]);
 
     const { newOrders } = useSelector(selectNewOrders);
-    console.log(newOrders)
 
     const OrderDetails = (ID, KLIENT, NADAWCA) => {
         navigation.navigate('EntriesDetails', { ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA });

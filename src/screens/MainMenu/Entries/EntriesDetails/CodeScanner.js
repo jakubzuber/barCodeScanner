@@ -1,26 +1,15 @@
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Button, View, Text } from "react-native";
+import { Button, View, Text, Alert } from "react-native";
 import { useState, useEffect } from 'react';
 import CustomButton from '../../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
 
-const CodeScanner = () => {
+const CodeScanner = ({definePallet}) => {
     const [hasPermission, setHasPermission] = useState(false);
-    const [scanned, setScanned] = useState(false);
-    const [text, setText] = useState('Not yet scanned');
-
-    const askForCameraPermission = () => {
-        (async () => {
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
-            setHasPermission(status == 'granted')
-        })()
-    };
-
-    const handleBarCodeScanner = ({ type, data }) => {
-        setScanned(true)
-        setText(data)
-        console.log('Type: ' + type + '\nData: ' + data)
-    };
+    const [scanned, setScanned] = useState(true);
+    const [text, setText] = useState('Zeskanuj paletę');
+    const [isPalletScanned, setIsPalletScanned] = useState(false)
+    //permissions 
 
     useEffect(() => {
         askForCameraPermission();
@@ -34,6 +23,13 @@ const CodeScanner = () => {
         )
     };
 
+    const askForCameraPermission = () => {
+        (async () => {
+            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            setHasPermission(status == 'granted')
+        })()
+    };
+
     if (hasPermission === false) {
         return (
             <View style={styles.container}>
@@ -41,6 +37,49 @@ const CodeScanner = () => {
                 <Button title={"Allow Camera"} onPress={() => askForCameraPermission()} ></Button>
             </View>
         )
+    };
+
+    // handle scan
+
+    const checkingPallet = async (pallet) => {
+        const palletCheck = await fetch('http://192.168.0.191:4999/palletCheck', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                palletCode: pallet
+            })
+        })
+            .then(res => res.json())
+        return palletCheck
+    };
+
+    const scanNewPallet = () => {
+        setIsPalletScanned(false)
+        setText('Zeskanuj paletę')
+        definePallet(null)
+    };
+
+
+    const handleBarCodeScanner = async ({ data }) => {
+        setScanned(true)
+        if (!isPalletScanned) {
+            const isPalletChek = await checkingPallet(data)
+            if (isPalletChek[0].KOD === 1) {
+                setIsPalletScanned(true)
+                setText(`Paleta: ${data}`)
+                setScanned(false)
+                definePallet(data)
+            } else {
+                return (
+                    Alert.alert('Nie zeskanowałeś palety')
+                )
+            }
+        } else {
+            console.log('co jeżeli jest zeskanowna?')
+        }
     };
 
     return (
@@ -52,7 +91,10 @@ const CodeScanner = () => {
                     {scanned && <CustomButton text={"Skanuj"} type="SCAN" onPress={() => setScanned(false)} />}
                 </BarCodeScanner>
             </View>
-            <Text style={styles.container}>{text}</Text>
+            <View>
+                <Text style={styles.barCodeInfo}>{text}</Text>
+                {isPalletScanned && <CustomButton text={"Skanuj na inną paletę"} type='INFO' onPress={() => scanNewPallet()} />}
+            </View>
         </View>
     );
 };

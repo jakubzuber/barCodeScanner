@@ -1,7 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { addScanToDatabase, deductScanFromDatabase } from "../callsToDatabase";
 
 export const fetchNewOrdersDetails = createAsyncThunk('routes/fetchNewOrdersDetails', async (ID) => {
-    const response = await fetch('http://192.168.0.194:4999/apiFetchNewOrdersDetails', {
+    const response = await fetch('http://192.168.0.191:4999/apiFetchNewOrdersDetails', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -23,6 +24,16 @@ const newOrdersDetailsSlice = createSlice({
         error: ''
     },
     reducers: {
+        addScan: ({newOrdersDetails}, {payload: itemId}) => {
+            const index = newOrdersDetails.findIndex(({ ID }) => ID === itemId)
+            newOrdersDetails[index].ZESKANOWANE = newOrdersDetails[index].ZESKANOWANE + 1
+            addScanToDatabase(itemId)
+        },
+        deductScan: ({newOrdersDetails}, {payload: itemId}) => {
+            const index = newOrdersDetails.findIndex(({ ID }) => ID === itemId)
+            newOrdersDetails[index].ZESKANOWANE = newOrdersDetails[index].ZESKANOWANE - 1
+            deductScanFromDatabase(itemId)
+        },
     },
     extraReducers: builder => {
         builder.addCase(fetchNewOrdersDetails.pending, (state) => {
@@ -40,6 +51,11 @@ const newOrdersDetailsSlice = createSlice({
         })
     }
 })
+
+export const { 
+    addScan,
+    deductScan
+} = newOrdersDetailsSlice.actions;
 
 export const selectNewOrdersDetails = state => state.newOrdersDetails
 

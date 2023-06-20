@@ -89,9 +89,63 @@ const getNewOrdersDetailsData = async ({idOrder}) => {
     };
 };
 
+const checkIfPallet = async ({palletCode}) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        if exists (select 1 KOD_KRESKOWY from WH_CARRIERS where KOD_KRESKOWY = ${palletCode})
+            begin
+                select 1 KOD
+            end 
+        else 
+            begin
+                select 0 KOD
+            end
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const addScan = async ({orderId}) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        update PRZYJECIA_SZCZEGOLY
+        SET ZESKANOWANE = ISNULL(ZESKANOWANE,0) + 1
+        WHERE ID = ${orderId}
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const deduct = async ({orderId}) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        update PRZYJECIA_SZCZEGOLY
+        SET ZESKANOWANE = ISNULL(ZESKANOWANE,0) - 1
+        WHERE ID = ${orderId}
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+
+
+
 module.exports = {
     validateLogIn,
     setNewPasswrod,
     getNewOrdersData,
-    getNewOrdersDetailsData
+    getNewOrdersDetailsData,
+    checkIfPallet,
+    addScan,
+    deduct
 };

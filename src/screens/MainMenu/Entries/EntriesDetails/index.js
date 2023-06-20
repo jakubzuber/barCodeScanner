@@ -1,7 +1,7 @@
-import { FlatList, SafeAreaView, Text, View } from "react-native"
+import { FlatList, SafeAreaView, Text, View, Alert } from "react-native"
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { fetchNewOrdersDetails, selectNewOrdersDetails } from "./newOrdersDetailSlice";
+import { fetchNewOrdersDetails, selectNewOrdersDetails, addScan, deductScan } from "./newOrdersDetailSlice";
 import { styles } from "./styled";
 import CustomButton from "../../../../components/CustomButton/CustomButton";
 import CodeScanner from "./CodeScanner";
@@ -10,6 +10,7 @@ const EntriesDetails = ({ route }) => {
     const dispatch = useDispatch();
     const [openCamera, setOpenCamera] = useState(false);
     const { ID, KLIENT, NADAWCA } = route.params
+    const [pallet, setPallet] = useState(null)
 
     useEffect(() => {
         dispatch(fetchNewOrdersDetails(ID))
@@ -21,13 +22,40 @@ const EntriesDetails = ({ route }) => {
         setOpenCamera(!openCamera)
     };
 
+    const definePallet = (data) => {
+        setPallet(data)
+    };
+
+    const addPackage = (ID) => {
+        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === ID)
+        if (order[0].ZESKANOWANE < order[0].ILOSC) {
+            dispatch(addScan(ID))
+        } else {
+            return (
+                Alert.alert('Wszystko zostało zeskanowane')
+            )
+        }   
+    };
+
+    const deductPackage = (ID) => {
+        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === ID)
+        if (order[0].ZESKANOWANE > 0) {
+            dispatch(deductScan(ID))
+        } else {
+            return (
+                Alert.alert('Nie możesz więcej odjąć')
+            )
+        }   
+    };
+
+
     return (
         <View style={styles.root} >
             <Text style={styles.topic} >{NADAWCA} - {KLIENT}</Text>
             <CustomButton text={openCamera ? 'Zamknij aparat' : 'Otwórz aparat'} type="TERTIARY" onPress={() => toogleCamera()}></CustomButton>
 
             {openCamera &&
-                <CodeScanner />}
+                <CodeScanner definePallet={definePallet} />}
             <SafeAreaView>
                 <FlatList
                     data={newOrdersDetails}
@@ -39,6 +67,12 @@ const EntriesDetails = ({ route }) => {
                                     <Text style={styles.text} >{item.PAKOWANIE}</Text>
                                     <Text style={styles.text} >{item.UWAGI}</Text>
                                 </View>
+                                {pallet !== null &&
+                                    <View style={styles.plusMinusContainer}>
+                                        <Text style={styles.plusText} onPress={() => addPackage(item.ID)}>+</Text>
+                                        <Text style={styles.minusText} onPress={() => deductPackage(item.ID)}>-</Text>
+                                    </View>
+                                }
                                 <View>
                                     <Text style={styles.text} >Skany:</Text>
                                     <Text style={styles.text} >{item.ZESKANOWANE}/{item.ILOSC}</Text>

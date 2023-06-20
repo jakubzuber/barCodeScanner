@@ -25,8 +25,6 @@ const styles = StyleSheet.create({
     container_PRIMARY: {
         backgroundColor: '#296ff0',
     },
-
-    container_TERTIARY: {},
     container_SCAN: {
         backgroundColor: '#296ff0',
         width: 150,
@@ -34,6 +32,18 @@ const styles = StyleSheet.create({
     text_TERTIARY: {
         color: '#949292',
     },
+    text_INFO: {
+        color: '#949292',
+        padding: 0,
+        marginVertical: 0
+    },
+    container_INFO: {
+        color: '#949292',
+        padding: 0,
+        marginVertical: 0,
+        width: '100%',
+        marginVertical: 3
+    }
 })
 
 export default CustomButton;

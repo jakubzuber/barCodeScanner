@@ -7,15 +7,15 @@ export const styles = StyleSheet.create({
         marginTop: 40
     },
     text: {
-        fontSize: 15,
+        fontSize: 11,
         color: 'white',
-        maxWidth: 250,
+        maxWidth: 170,
         padding: 1,
     },
     topic: {
         fontSize: 20,
         fontWeight: '600',
-        marginBottom: 20,
+        marginBottom: 5,
     },
     viewContainer: {
         display: 'flex',
@@ -29,7 +29,8 @@ export const styles = StyleSheet.create({
     },
     container: {
         backgroundColor: '#fff',
-        textAlign: 'center'
+        textAlign: 'center',
+        padding: 20
     },
     barCodeBox: {
         height: 200,
@@ -42,4 +43,25 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         margin: 20,
     },
+    barCodeInfo: {
+        backgroundColor: '#fff',
+        textAlign: 'center',
+        padding: 5,
+        fontSize: 20
+    },
+    plusMinusContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    plusText: {
+        fontSize: 45,
+        marginHorizontal: 15, 
+        color: '#09ec28',
+        height: '100%'
+    },
+    minusText: {
+        fontSize: 45,
+        color: '#eb0a0a',
+        height: '100%'
+    }
 });

@@ -11,7 +11,7 @@ const NewPasswordScreen = ({route}) => {
     const { login, password } = route.params;
     
      const sendNewPassword = async(newDetails) => {
-        await fetch('http://192.168.0.194:4999/valideLogIn/newPasswrod', {
+        await fetch('http://192.168.0.191:4999/valideLogIn/newPasswrod', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',

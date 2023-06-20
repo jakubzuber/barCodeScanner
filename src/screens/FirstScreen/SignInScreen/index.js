@@ -1,6 +1,5 @@
-import { View, Image, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import CustomInput from '../../../components/CustomInput/CustomInput';
-import Logo from '../../../../assets/Logo.png'
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
@@ -10,7 +9,7 @@ const SignInScreen = () => {
     const navigation = useNavigation();
 
     const fetchLoginData = async(username) => {
-        const returnedPassword = await fetch('http://192.168.0.194:4999/valideLogIn', {
+        const returnedPassword = await fetch('http://192.168.0.191:4999/valideLogIn', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
@@ -52,7 +51,7 @@ const SignInScreen = () => {
 
     return (
         <View style={styles.root}>
-            <Image style={styles.image} source={Logo}/>
+            <Text style={styles.text} >Witaj!</Text>
             <CustomInput 
             placeholder='Nazwa użytkownika'
             name='username'
