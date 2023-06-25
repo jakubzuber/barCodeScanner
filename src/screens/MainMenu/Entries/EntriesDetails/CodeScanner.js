@@ -79,6 +79,7 @@ const CodeScanner = ({definePallet}) => {
             }
         } else {
             console.log('co jeżeli jest zeskanowna?')
+            //funckca dodawan do dispatch i bazy na podstawie + i -
         }
     };
 

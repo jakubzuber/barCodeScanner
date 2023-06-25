@@ -17,8 +17,8 @@ const Entries = () => {
 
     const { newOrders } = useSelector(selectNewOrders);
 
-    const OrderDetails = (ID, KLIENT, NADAWCA) => {
-        navigation.navigate('EntriesDetails', { ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA });
+    const OrderDetails = (ID, KLIENT, NADAWCA, KLIENT_ID) => {
+        navigation.navigate('EntriesDetails', { ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA, K_ID: KLIENT_ID });
     };
 
     return (
@@ -29,7 +29,7 @@ const Entries = () => {
                     data={newOrders}
                     renderItem={({ item }) => {
                         return (
-                            <View style={styles.viewContainer} key={item.ID} onTouchEnd={() => OrderDetails(item.ID, item.KLIENT, item.NADAWCA)}>
+                            <View style={styles.viewContainer} key={item.ID} onLong onTouchEnd={() => OrderDetails(item.ID, item.KLIENT, item.NADAWCA, item.KLIENT_ID)}>
                                 <View>
                                     <Text style={styles.text} >{item.NADAWCA} - {item.KLIENT}</Text>
                                     <Text style={styles.text} >{item.ILOSC} szt. / {item.WAGA} kg</Text>

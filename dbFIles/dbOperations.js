@@ -137,6 +137,50 @@ const deduct = async ({orderId}) => {
     };
 };
 
+const addToWh = async (data) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        if exists (select 1 from STANY_MAGAZYNOWE where KOD_PRODUKTU = '${data.product_code}' and PALETA_NUMER = ${data.pallet} and KLIENT_ID = ${data.klient_id})
+        begin
+            update STANY_MAGAZYNOWE
+            set ILOSC = ILOSC + 1
+            where KOD_PRODUKTU = '${data.product_code}' and PALETA_NUMER = ${data.pallet} and KLIENT_ID = ${data.klient_id}
+        end
+      else
+        begin
+            insert into STANY_MAGAZYNOWE (PALETA_NUMER, KOD_PRODUKTU, NAZWA_PRODUKTU, ILOSC, WAGA, KLIENT_ID, KLIENT_NAZWA, W_TRAKCIE)
+            VALUES (${data.pallet}, '${data.product_code}', '${data.produck_sym}', 1, 1, ${data.klient_id}, '${data.klient_name}', 1 )
+        end
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const deleteFromWh = async (data) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        if (select top 1 ILOSC from STANY_MAGAZYNOWE where KOD_PRODUKTU = '${data.product_code}' and PALETA_NUMER = ${data.pallet} and KLIENT_ID = ${data.klient_id}) = 1
+            begin
+                delete from STANY_MAGAZYNOWE
+                where KOD_PRODUKTU = '${data.product_code}' and PALETA_NUMER = ${data.pallet} and KLIENT_ID = ${data.klient_id}
+            end
+        else
+            begin
+                update STANY_MAGAZYNOWE
+                set ILOSC = ILOSC - 1
+                where KOD_PRODUKTU = '${data.product_code}' and PALETA_NUMER = ${data.pallet} and KLIENT_ID = ${data.klient_id}
+            end
+        
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
 
 
 
@@ -147,5 +191,7 @@ module.exports = {
     getNewOrdersDetailsData,
     checkIfPallet,
     addScan,
-    deduct
+    deduct,
+    addToWh,
+    deleteFromWh
 };

@@ -5,11 +5,12 @@ import { fetchNewOrdersDetails, selectNewOrdersDetails, addScan, deductScan } fr
 import { styles } from "./styled";
 import CustomButton from "../../../../components/CustomButton/CustomButton";
 import CodeScanner from "./CodeScanner";
+import { addScanToWh, deleteFromWh } from "../callsToDatabase";
 
 const EntriesDetails = ({ route }) => {
     const dispatch = useDispatch();
     const [openCamera, setOpenCamera] = useState(false);
-    const { ID, KLIENT, NADAWCA } = route.params
+    const { ID, KLIENT, NADAWCA, K_ID } = route.params
     const [pallet, setPallet] = useState(null)
 
     useEffect(() => {
@@ -30,6 +31,7 @@ const EntriesDetails = ({ route }) => {
         const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === ID)
         if (order[0].ZESKANOWANE < order[0].ILOSC) {
             dispatch(addScan(ID))
+            addScanToWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: K_ID, klient: KLIENT})
         } else {
             return (
                 Alert.alert('Wszystko zostało zeskanowane')
@@ -41,6 +43,7 @@ const EntriesDetails = ({ route }) => {
         const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === ID)
         if (order[0].ZESKANOWANE > 0) {
             dispatch(deductScan(ID))
+            deleteFromWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, klientId: K_ID})
         } else {
             return (
                 Alert.alert('Nie możesz więcej odjąć')

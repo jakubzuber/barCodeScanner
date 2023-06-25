@@ -46,4 +46,14 @@ app.post('/deduct', async(req, res) => {
     res.status(200).json({ success: true })
 });
 
+app.post('/addToWh', async(req, res) => {
+    await dbOperation.addToWh(req.body);
+    res.status(200).json({ success: true })
+});
+
+app.post('/deleteFromWh', async(req, res) => {
+    await dbOperation.deleteFromWh(req.body);
+    res.status(200).json({ success: true })
+});
+
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
