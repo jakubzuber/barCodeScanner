@@ -27,7 +27,8 @@ export const addScanToWh = async (data) => {
             weight: 0,
             klient_id: data.klientId,
             klient_name: data.klient,
-            working_on: 1
+            working_on: 1,
+            przyjecie: data.przyjecie
         })
     })
 };
@@ -42,7 +43,7 @@ export const deleteFromWh = async (data) => {
         body: JSON.stringify({
             pallet: data.pallet,
             product_code: data.code,
-            klient_id: data.klientId,
+            klient_id: data.klientId
         })
     })
 };

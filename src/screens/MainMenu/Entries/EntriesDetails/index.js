@@ -13,6 +13,7 @@ const EntriesDetails = ({ route }) => {
     const { ID, KLIENT, NADAWCA, K_ID } = route.params
     const [pallet, setPallet] = useState(null)
 
+
     useEffect(() => {
         dispatch(fetchNewOrdersDetails(ID))
     }, [dispatch]);
@@ -27,11 +28,11 @@ const EntriesDetails = ({ route }) => {
         setPallet(data)
     };
 
-    const addPackage = (ID) => {
-        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === ID)
+    const addPackage = (props) => {
+        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === props)
         if (order[0].ZESKANOWANE < order[0].ILOSC) {
-            dispatch(addScan(ID))
-            addScanToWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: K_ID, klient: KLIENT})
+            dispatch(addScan(props))
+            addScanToWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: K_ID, klient: KLIENT, przyjecie: ID})
         } else {
             return (
                 Alert.alert('Wszystko zostało zeskanowane')
@@ -39,11 +40,11 @@ const EntriesDetails = ({ route }) => {
         }   
     };
 
-    const deductPackage = (ID) => {
-        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === ID)
+    const deductPackage = (props) => {
+        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === props)
         if (order[0].ZESKANOWANE > 0) {
-            dispatch(deductScan(ID))
-            deleteFromWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, klientId: K_ID})
+            dispatch(deductScan(props))
+            deleteFromWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, klientId: K_ID, przyjecie: ID})
         } else {
             return (
                 Alert.alert('Nie możesz więcej odjąć')
