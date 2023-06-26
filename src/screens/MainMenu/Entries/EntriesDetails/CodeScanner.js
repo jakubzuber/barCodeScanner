@@ -1,11 +1,12 @@
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Button, View, Text, Alert } from "react-native";
+import { Button, View, Text, Alert, BackHandler} from "react-native";
 import { useState, useEffect } from 'react';
 import CustomButton from '../../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
 import { useDispatch } from 'react-redux';
 import { addScan } from './newOrdersDetailSlice';
 import { addScanToWh } from '../callsToDatabase';
+import { useNavigation } from '@react-navigation/native';
 
 const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) => {
     const [hasPermission, setHasPermission] = useState(false);
@@ -13,9 +14,10 @@ const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) =
     const [text, setText] = useState('Zeskanuj paletę');
     const [isPalletScanned, setIsPalletScanned] = useState(false)
     const [pallet, setPallet] = useState()
-    //permissions 
-
     const dispatch = useDispatch();
+    const navigation = useNavigation();
+
+    //permissions 
 
     useEffect(() => {
         askForCameraPermission();
@@ -76,7 +78,6 @@ const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) =
             if (isPalletChek[0].KOD === 1) {
                 setIsPalletScanned(true)
                 setText(`Paleta: ${data}`)
-              
                 definePallet(data)
                 setPallet(data)
             } else {
