@@ -78,7 +78,8 @@ const getNewOrdersDetailsData = async ({idOrder}) => {
             PAKOWANIE,
             UWAGI,
             ROZBIEZNOSC,
-            ISNULL(ZESKANOWANE,0) ZESKANOWANE
+            ISNULL(ZESKANOWANE,0) ZESKANOWANE,
+            KOD_KRESKOWY
         FROM PRZYJECIA_SZCZEGOLY
         WHERE PRZYJECIE_ID = ${idOrder}
         `)
@@ -93,7 +94,7 @@ const checkIfPallet = async ({palletCode}) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
-        if exists (select 1 KOD_KRESKOWY from WH_CARRIERS where KOD_KRESKOWY = ${palletCode})
+        if exists (select 1 KOD_KRESKOWY from WH_CARRIERS where KOD_KRESKOWY = '${palletCode}')
             begin
                 select 1 KOD
             end 
@@ -149,8 +150,8 @@ const addToWh = async (data) => {
         end
       else
         begin
-            insert into STANY_MAGAZYNOWE (PALETA_NUMER, KOD_PRODUKTU, NAZWA_PRODUKTU, ILOSC, WAGA, KLIENT_ID, KLIENT_NAZWA, W_TRAKCIE, PRZYJECIE_ID)
-            VALUES (${data.pallet}, '${data.product_code}', '${data.produck_sym}', 1, 1, ${data.klient_id}, '${data.klient_name}', 1, ${data.przyjecie})
+            insert into STANY_MAGAZYNOWE (PALETA_NUMER, KOD_PRODUKTU, NAZWA_PRODUKTU, ILOSC, WAGA, KLIENT_ID, KLIENT_NAZWA, W_TRAKCIE, PRZYJECIE_ID, KOD_KRESKOWY)
+            VALUES (${data.pallet}, '${data.product_code}', '${data.produck_sym}', 1, 1, ${data.klient_id}, '${data.klient_name}', 1, ${data.przyjecie}, '${data.kod_kreskowy}')
         end
         `)
     }

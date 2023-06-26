@@ -32,7 +32,7 @@ const EntriesDetails = ({ route }) => {
         const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === props)
         if (order[0].ZESKANOWANE < order[0].ILOSC) {
             dispatch(addScan(props))
-            addScanToWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: K_ID, klient: KLIENT, przyjecie: ID})
+            addScanToWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: K_ID, klient: KLIENT, przyjecie: ID, kod_kreskowy: order[0].KOD_KRESKOWY})
         } else {
             return (
                 Alert.alert('Wszystko zostało zeskanowane')
@@ -59,7 +59,7 @@ const EntriesDetails = ({ route }) => {
             <CustomButton text={openCamera ? 'Zamknij aparat' : 'Otwórz aparat'} type="TERTIARY" onPress={() => toogleCamera()}></CustomButton>
 
             {openCamera &&
-                <CodeScanner definePallet={definePallet} />}
+                <CodeScanner definePallet={definePallet} newOrdersDetails={newOrdersDetails} klientId={K_ID} klientName={KLIENT}/>}
             <SafeAreaView>
                 <FlatList
                     data={newOrdersDetails}

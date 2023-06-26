@@ -28,7 +28,8 @@ export const addScanToWh = async (data) => {
             klient_id: data.klientId,
             klient_name: data.klient,
             working_on: 1,
-            przyjecie: data.przyjecie
+            przyjecie: data.przyjecie,
+            kod_kreskowy: data.kod_kreskowy
         })
     })
 };

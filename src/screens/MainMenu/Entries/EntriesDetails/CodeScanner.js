@@ -3,13 +3,19 @@ import { Button, View, Text, Alert } from "react-native";
 import { useState, useEffect } from 'react';
 import CustomButton from '../../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
+import { useDispatch } from 'react-redux';
+import { addScan } from './newOrdersDetailSlice';
+import { addScanToWh } from '../callsToDatabase';
 
-const CodeScanner = ({definePallet}) => {
+const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) => {
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
     const [text, setText] = useState('Zeskanuj paletę');
     const [isPalletScanned, setIsPalletScanned] = useState(false)
+    const [pallet, setPallet] = useState()
     //permissions 
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         askForCameraPermission();
@@ -70,16 +76,24 @@ const CodeScanner = ({definePallet}) => {
             if (isPalletChek[0].KOD === 1) {
                 setIsPalletScanned(true)
                 setText(`Paleta: ${data}`)
-                setScanned(false)
+              
                 definePallet(data)
+                setPallet(data)
             } else {
                 return (
                     Alert.alert('Nie zeskanowałeś palety')
                 )
             }
         } else {
-            console.log('co jeżeli jest zeskanowna?')
-            //funckca dodawan do dispatch i bazy na podstawie + i -
+            if (pallet === data) {
+                return (
+                    Alert.alert('Skanujesz ponownie paletę!')
+                )
+            } else {
+                const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.KOD_KRESKOWY === data)
+                dispatch(addScan(order[0].ID))
+                addScanToWh({ pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: klientId, klient: klientName, przyjecie: order[0].PRZYJECIE_ID, kod_kreskowy: order[0].KOD_KRESKOWY })
+            }
         }
     };
 
