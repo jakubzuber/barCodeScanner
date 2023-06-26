@@ -56,4 +56,11 @@ app.post('/deleteFromWh', async(req, res) => {
     res.status(200).json({ success: true })
 });
 
+app.post('/closeOrder', async(req, res) => {
+    await dbOperation.closeOrder(req.body);
+    res.status(200).json({ success: true })
+});
+
+
+
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));

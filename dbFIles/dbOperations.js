@@ -183,7 +183,26 @@ const deleteFromWh = async (data) => {
     };
 };
 
+const closeOrder = async ({ID}) => {
+    console.log(ID)
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        DELETE FROM PRZYJECIA1
+        WHERE ID = ${ID}
 
+        DELETE FROM PRZYJECIA_SZCZEGOLY
+        WHERE PRZYJECIE_ID = ${ID}
+
+        UPDATE STANY_MAGAZYNOWE
+        SET W_TRAKCIE = 0
+        WHERE PRZYJECIE_ID = ${ID}
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
 
 module.exports = {
     validateLogIn,
@@ -194,5 +213,6 @@ module.exports = {
     addScan,
     deduct,
     addToWh,
-    deleteFromWh
+    deleteFromWh,
+    closeOrder
 };
