@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const fetchNewOrders = createAsyncThunk('routes/fetchNewOrders', async () => {
     const response = await fetch('http://192.168.0.191:4999/apiFetchNewOrders', {

@@ -61,6 +61,10 @@ app.post('/closeOrder', async(req, res) => {
     res.status(200).json({ success: true })
 });
 
+app.get('/apiFetchRemovals', async(req, res) => {
+    const result = await dbOperation.getRemovalsData(req.body);
+    res.send(result.recordset)
+});
 
 
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));

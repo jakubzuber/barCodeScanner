@@ -204,6 +204,37 @@ const closeOrder = async ({ID}) => {
     };
 };
 
+const getRemovalsData = async () => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        SELECT
+        K.NAZWA KLIENT,
+		PS.SKANY,
+        P.*   
+        FROM WYDANIA P CROSS APPLY
+                        (
+                        SELECT TOP 1
+                        K.NAZWA
+                        FROM KLIENCI K
+                        WHERE K.ID = P.KLEINT_ID
+                        ) K CROSS APPLY 
+						(
+						SELECT 
+						ISNULL(SUM(PS.ZESKANOWANE),0) SKANY
+						FROM PRZYJECIA_SZCZEGOLY PS
+						WHERE PS.PRZYJECIE_ID = P.ID
+						) PS
+        WHERE OBSLUGA = 'Jakub Zuber'
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+
 module.exports = {
     validateLogIn,
     setNewPasswrod,
@@ -214,5 +245,6 @@ module.exports = {
     deduct,
     addToWh,
     deleteFromWh,
-    closeOrder
+    closeOrder,
+    getRemovalsData
 };
