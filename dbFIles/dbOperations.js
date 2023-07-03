@@ -222,8 +222,8 @@ const getRemovalsData = async () => {
 						(
 						SELECT 
 						ISNULL(SUM(PS.ZESKANOWANE),0) SKANY
-						FROM PRZYJECIA_SZCZEGOLY PS
-						WHERE PS.PRZYJECIE_ID = P.ID
+						FROM WYDANIA_SZCZEGOLY PS
+						WHERE PS.WYDANIE_ID = P.ID
 						) PS
         WHERE OBSLUGA = 'Jakub Zuber'
         `)
@@ -234,6 +234,46 @@ const getRemovalsData = async () => {
     };
 };
 
+const getRemovalDetailsData = async ({idOrder}) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        SELECT
+            ID,
+            WYDANIE_ID,
+            KOD_PROCUKTU,
+            NAZWA_PRODUKTU,
+            ILOSC,
+            WAGA,
+            PAKOWANIE,
+            UWAGI,
+            ROZBIEZNOSCI,
+            ISNULL(ZESKANOWANE,0) ZESKANOWANE,
+            KOD_KRESKOWY
+        FROM WYDANIA_SZCZEGOLY
+        WHERE WYDANIE_ID = ${idOrder}
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const getTransfersData = async ({pallet}) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        SELECT * 
+        FROM STANY_MAGAZYNOWE 
+        WHERE PALETA_NUMER = '${pallet}'
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
 
 module.exports = {
     validateLogIn,
@@ -246,5 +286,7 @@ module.exports = {
     addToWh,
     deleteFromWh,
     closeOrder,
-    getRemovalsData
+    getRemovalsData,
+    getRemovalDetailsData,
+    getTransfersData
 };

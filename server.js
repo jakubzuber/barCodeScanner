@@ -66,5 +66,14 @@ app.get('/apiFetchRemovals', async(req, res) => {
     res.send(result.recordset)
 });
 
+app.post('/apiFetchRemovalDetails', async(req, res) => {
+    const result = await dbOperation.getRemovalDetailsData(req.body);
+    res.send(result.recordset)
+});
+
+app.post('/apiFetchTransfers', async(req, res) => {
+    const result = await dbOperation.getTransfersData(req.body);
+    res.send(result.recordset)
+});
 
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));

@@ -90,9 +90,4 @@ const EntriesDetails = ({ route }) => {
     );
 };
 
-/*
-                   
-*/
-
-
 export default EntriesDetails;

@@ -18,8 +18,8 @@ const Removals = () => {
     const { removals } = useSelector(selectRemovals);
 
     
-    const RemovalDetails = (ID, KLIENT, NADAWCA, KLIENT_ID) => {
-        navigation.navigate('RemovalsDetails', { ID: ID, KLIENT: KLIENT, NADAWCA: NADAWCA, K_ID: KLIENT_ID });
+    const RemovalDetails = (ID, KLIENT, ODBIORCA, KLIENT_ID) => {
+        navigation.navigate('RemovalsDetails', { ID: ID, KLIENT: KLIENT, ODBIORCA: ODBIORCA, K_ID: KLIENT_ID });
     };
     
 
@@ -45,7 +45,7 @@ const Removals = () => {
                     data={removals}
                     renderItem={({ item }) => {
                         return (
-                            <Pressable onPress={() => RemovalDetails(item.ID, item.KLIENT, item.NADAWCA, item.KLIENT_ID)} onLongPress={() => createTwoButtonAlert(item.ID)} >
+                            <Pressable onPress={() => RemovalDetails(item.ID, item.KLIENT, item.ODBIORCA, item.KLIENT_ID)} onLongPress={() => createTwoButtonAlert(item.ID)} >
                                 <View style={styles.viewContainer} key={item.ID}>
                                     <View>
                                         <Text style={styles.text} >{item.KLIENT} - {item.ODBIORCA}</Text>
