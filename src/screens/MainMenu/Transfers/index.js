@@ -19,37 +19,35 @@ const Transfers = () => {
         const index = toMove.findIndex(el => el.cargo === KOD_PRODUKTU)
         const indexTransfers = transfers.findIndex(el => el.KOD_PRODUKTU === KOD_PRODUKTU)
 
-        if (toMove[index].ilosc < transfers[indexTransfers].ILOSC) {
-            if (index !== -1) {
+        if (index === -1) {
+            setToMove(state => [...state, { cargo: KOD_PRODUKTU, ilosc: 1 }])
+        } else {
+            if (toMove[index].ilosc < transfers[indexTransfers].ILOSC) {
                 toMove[index].ilosc = toMove[index].ilosc + 1
                 setToMove(state => [...state])
-                
             } else {
-                setToMove(state => [...state, { cargo: KOD_PRODUKTU, ilosc: 1 }])
+                return (
+                    Alert.alert('Nie możej więcej zeskanować')
+                )
             }
-        } else {
-            return (
-                Alert.alert('Nie możej więcej zeskanować')
-            )
         }
     };
 
     const deductPackage = (KOD_PRODUKTU) => {
         const index = toMove.findIndex(el => el.cargo === KOD_PRODUKTU)
 
-        if (toMove[index].ilosc > 1 ) {
-            console.log('ilosc jest wieksza od 1 wiec usuwamy - 1')
-            toMove[index].ilosc = toMove[index].ilosc - 1
-            setToMove(state => [...state])
-        }
-        if (toMove[index].ilosc = 1) {
-            console.log('wywal to z listy')
-            toMove.splice(index, 1)
-            setToMove(state => [...state])
-        } else {
+        if (index === -1) {
             return (
-                Alert.alert('Nie można więcej odjąć')
+                Alert.alert('Nie można więcej odjąć!')
             )
+        } else {
+            if (toMove[index].ilosc === 1 ) {
+                toMove.splice(index, 1)
+                setToMove(state => [...state])
+            } else {
+                toMove[index].ilosc = toMove[index].ilosc - 1
+                setToMove(state => [...state])
+            }
         }
     };
 

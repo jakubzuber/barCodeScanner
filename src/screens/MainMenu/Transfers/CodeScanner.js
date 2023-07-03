@@ -6,7 +6,7 @@ import { styles } from './styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTransfers, selectTransfers } from './transfersSlice';
 
-const CodeScanner = ({definePallet}) => {
+const CodeScanner = ({ definePallet }) => {
     const dispatch = useDispatch()
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
@@ -54,6 +54,7 @@ const CodeScanner = ({definePallet}) => {
     };
 
     const checkingPallet = async (pallet) => {
+        console.log(pallet)
         const palletCheck = await fetch('http://192.168.0.191:4999/palletCheck', {
             method: 'POST',
             headers: {
@@ -78,7 +79,7 @@ const CodeScanner = ({definePallet}) => {
                 setText(`Paleta: ${data}`)
                 setPallet(data)
                 definePallet(data)
-                dispatch(fetchTransfers({pallet: data}))
+                dispatch(fetchTransfers({ pallet: data }))
             } else {
                 return (
                     Alert.alert('Nie zeskanowałeś palety')
@@ -90,9 +91,15 @@ const CodeScanner = ({definePallet}) => {
                     Alert.alert('Skanujesz ponownie tą samą paletę!')
                 )
             } else {
-                return (
-                    Alert.alert('Sakanowanie produktu')
-                )
+                const ifPal = await checkingPallet(data)
+                console.log(ifPal)
+                if (ifPal[0].KOD === 1) {
+                    Alert.alert(`Przesujnięcie na paletę ${data}`)
+                } else {
+                    return (
+                        Alert.alert('Sakanowanie produktu')
+                    )
+                }
             }
         }
     };
