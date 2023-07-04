@@ -20,8 +20,12 @@ const HomeScreen = () => {
             text={'Przesunięcia'}
             onPress={() => navigation.navigate('Transfers')}
             />
+             <CustomButton 
+            text={'Przypisywanie do regału'}
+            onPress={() => navigation.navigate('Assignment')}
+            />
             <CustomButton 
-            text={'Stany magazynowe'} 
+            text={'Podgląd'} 
             onPress={() => navigation.navigate('Inventory')}
             />
             <CustomButton 

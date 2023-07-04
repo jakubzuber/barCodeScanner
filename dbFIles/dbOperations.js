@@ -1,7 +1,7 @@
 const config = require('./dbConfig')
 const sql = require('mssql')
 
-const validateLogIn = async(USERNAME) => {
+const validateLogIn = async (USERNAME) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
@@ -13,12 +13,12 @@ const validateLogIn = async(USERNAME) => {
         `)
         return data
     }
-    catch(error) {
+    catch (error) {
         console.log(error)
     };
 };
 
-const setNewPasswrod = async(data) => {
+const setNewPasswrod = async (data) => {
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
@@ -29,7 +29,7 @@ const setNewPasswrod = async(data) => {
         and USER_FOR = 2
         `)
     }
-    catch(error) {
+    catch (error) {
         console.log(error)
     };
 };
@@ -64,7 +64,7 @@ const getNewOrdersData = async () => {
     };
 };
 
-const getNewOrdersDetailsData = async ({idOrder}) => {
+const getNewOrdersDetailsData = async ({ idOrder }) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
@@ -90,7 +90,7 @@ const getNewOrdersDetailsData = async ({idOrder}) => {
     };
 };
 
-const checkIfPallet = async ({palletCode}) => {
+const checkIfPallet = async ({ palletCode }) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
@@ -110,7 +110,7 @@ const checkIfPallet = async ({palletCode}) => {
     };
 };
 
-const addScan = async ({orderId}) => {
+const addScan = async ({ orderId }) => {
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
@@ -124,7 +124,7 @@ const addScan = async ({orderId}) => {
     };
 };
 
-const deduct = async ({orderId}) => {
+const deduct = async ({ orderId }) => {
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
@@ -183,7 +183,7 @@ const deleteFromWh = async (data) => {
     };
 };
 
-const closeOrder = async ({ID}) => {
+const closeOrder = async ({ ID }) => {
     console.log(ID)
     try {
         let pool = await sql.connect(config);
@@ -234,7 +234,7 @@ const getRemovalsData = async () => {
     };
 };
 
-const getRemovalDetailsData = async ({idOrder}) => {
+const getRemovalDetailsData = async ({ idOrder }) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
@@ -260,12 +260,12 @@ const getRemovalDetailsData = async ({idOrder}) => {
     };
 };
 
-const getTransfersData = async ({pallet}) => {
+const getTransfersData = async ({ pallet }) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
         SELECT * 
-        FROM STANY_MAGAZYNOWE 
+        FROM STANY_MAGAZYNOWE with(nolock)
         WHERE PALETA_NUMER = '${pallet}'
         `)
         return data
@@ -274,6 +274,101 @@ const getTransfersData = async ({pallet}) => {
         console.log(error)
     };
 };
+
+const transfer = async ({ cargo, fromPallet, toPallet }) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        drop table if exists #tmp
+
+        declare @session int = CAST(RAND() * 1000000 AS INT)
+
+        create table #tmp (
+            code varchar(200),
+            number int
+        )
+
+        insert into #tmp (code, number) values 
+        ${cargo.map(item =>
+            `('${item.cargo}', ${item.ilosc})`
+        )}
+        
+        insert into tmp_transfers (ROW, CODE, NUMBER, SESSION)
+        select 
+        ROW_NUMBER() OVER(ORDER BY code DESC),
+        code,
+        number,
+        @session
+        from #tmp
+
+        declare @counter int = (select top 1 row from tmp_transfers where SESSION = @session order by row desc)
+
+        while @counter > 0
+            begin
+                if exists (select 1 from STANY_MAGAZYNOWE where PALETA_NUMER = '${toPallet}' and KOD_PRODUKTU = (select CODE from tmp_transfers where ROW = @counter and SESSION = @session))
+                    begin
+                        update STANY_MAGAZYNOWE
+                        set ILOSC = ILOSC + (select NUMBER from tmp_transfers where ROW = @counter and SESSION = @session)
+                        where PALETA_NUMER = '${toPallet}' and KOD_PRODUKTU = (select CODE from tmp_transfers where ROW = @counter and SESSION = @session)
+                    end
+                else 
+                    begin
+                        insert into STANY_MAGAZYNOWE (PALETA_NUMER, KOD_PRODUKTU, NAZWA_PRODUKTU, ILOSC, WAGA, KLIENT_ID, KLIENT_NAZWA, W_TRAKCIE, PRZYJECIE_ID, KOD_KRESKOWY)
+                        select 
+                        '${toPallet}',
+                        SM.KOD_PRODUKTU,
+                        SM.NAZWA_PRODUKTU,
+                        (select NUMBER from tmp_transfers where ROW = @counter and SESSION = @session),
+                        SM.WAGA,
+                        SM.KLIENT_ID,
+                        SM.KLIENT_NAZWA,
+                        SM.W_TRAKCIE,
+                        SM.PRZYJECIE_ID,
+                        SM.KOD_KRESKOWY
+                        from STANY_MAGAZYNOWE SM
+                        where PALETA_NUMER = '${fromPallet}' and KOD_PRODUKTU = (select CODE from tmp_transfers where ROW = @counter and SESSION = @session)
+                    end
+
+                
+                if (select ILOSC from STANY_MAGAZYNOWE where PALETA_NUMER = '${fromPallet}' and KOD_PRODUKTU = (select CODE from tmp_transfers where ROW = @counter and SESSION = @session)) = (select NUMBER from tmp_transfers where ROW = @counter and SESSION = @session)
+                    begin
+                        delete from STANY_MAGAZYNOWE
+                        where PALETA_NUMER = '${fromPallet}' and KOD_PRODUKTU = (select CODE from tmp_transfers where ROW = @counter and SESSION = @session)
+                    end
+                else
+                    begin
+                        update STANY_MAGAZYNOWE
+                        set ILOSC = ILOSC - (select NUMBER from tmp_transfers where ROW = @counter and SESSION = @session)
+                        where PALETA_NUMER = '${fromPallet}' and KOD_PRODUKTU = (select CODE from tmp_transfers where ROW = @counter and SESSION = @session)
+                    end
+
+                insert into TRANSFERS (DATA, FROM_PALLET, TO_PALLET, CARGO, NUMBER)
+                values (getdate(), '${fromPallet}', '${toPallet}', (select CODE from tmp_transfers where ROW = @counter and SESSION = @session), (select NUMBER from tmp_transfers where ROW = @counter and SESSION = @session))
+            
+            set @counter = @counter - 1
+            end
+        
+        delete from tmp_transfers
+        where SESSION = @session 
+
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+
+
+/*
+        ${cargo.map(item => {
+            `
+            
+
+
+            
+        `})}
+        */
 
 module.exports = {
     validateLogIn,
@@ -288,5 +383,6 @@ module.exports = {
     closeOrder,
     getRemovalsData,
     getRemovalDetailsData,
-    getTransfersData
+    getTransfersData,
+    transfer
 };

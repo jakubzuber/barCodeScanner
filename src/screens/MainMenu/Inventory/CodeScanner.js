@@ -4,11 +4,10 @@ import { useState, useEffect } from 'react';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
 import { useDispatch } from 'react-redux';
-import { fetchTransfers } from './transfersSlice';
+import { fetchTransfers } from '../Transfers/transfersSlice';
 import { useNavigation } from '@react-navigation/native';
 
-const CodeScanner = ({ definePallet, addPackage, transfers, submitTransfer, clearData }) => {
-    const navigation = useNavigation()
+const CodeScanner = ({ definePallet }) => {
     const dispatch = useDispatch()
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
@@ -53,7 +52,6 @@ const CodeScanner = ({ definePallet, addPackage, transfers, submitTransfer, clea
         setText('Zeskanuj paletę')
         setPallet()
         definePallet(null)
-        clearData()
     };
 
     const checkingPallet = async (pallet) => {
@@ -73,34 +71,17 @@ const CodeScanner = ({ definePallet, addPackage, transfers, submitTransfer, clea
 
     const handleBarCodeScanner = async ({ data }) => {
         setScanned(true)
-        if (!isPalletScanned) {
-            const isPalletChek = await checkingPallet(data)
-            if (isPalletChek[0].KOD === 1) {
-                setIsPalletScanned(true)
-                setText(`Paleta: ${data}`)
-                setPallet(data)
-                definePallet(data)
-                dispatch(fetchTransfers({ pallet: data }))
-            } else {
-                return (
-                    Alert.alert('Nie zeskanowałeś palety')
-                )
-            }
+        const isPalletChek = await checkingPallet(data)
+        if (isPalletChek[0].KOD === 1) {
+            setIsPalletScanned(true)
+            setText(`Paleta: ${data}`)
+            setPallet(data)
+            definePallet(data)
+            dispatch(fetchTransfers({ pallet: data }))
         } else {
-            if (pallet === data) {
-                return (
-                    Alert.alert('Skanujesz ponownie tą samą paletę!')
-                )
-            } else {
-                const ifPal = await checkingPallet(data)
-                if (ifPal[0].KOD === 1) {
-                    submitTransfer(data)
-                    scanNewPallet()
-                } else {
-                    const code = transfers.filter(transfers => transfers.KOD_KRESKOWY === data)[0].KOD_PRODUKTU
-                    addPackage(code)
-                }
-            }
+            return (
+                Alert.alert('Nie zeskanowałeś palety')
+            )
         }
     };
 

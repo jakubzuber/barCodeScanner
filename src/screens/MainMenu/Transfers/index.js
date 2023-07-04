@@ -4,12 +4,17 @@ import CodeScanner from "./CodeScanner";
 import { useSelector } from "react-redux";
 import { selectTransfers } from "./transfersSlice";
 import { useState } from "react";
+import { submitTransferApi } from "./callsToDatabase";
 
 const Transfers = () => {
     const { transfers } = useSelector(selectTransfers);
     const [pallet, setPallet] = useState(null);
 
     const [toMove, setToMove] = useState([])
+
+    const clearData = () => {
+        setToMove([])
+    };
 
     const definePallet = (data) => {
         setPallet(data)
@@ -51,11 +56,21 @@ const Transfers = () => {
         }
     };
 
+    const submitTransfer = (code) => {
+        if (toMove.length === 0) {
+            return (
+                Alert.alert('Nie zeskanowałeś żadanych ilości :(')
+            )
+        } else {
+            submitTransferApi({fromPallet: pallet, data: toMove, toPallet: code})
+        }  
+    };
+
     return (
         <View style={styles.root} >
             <Text style={styles.topic} >PRZESUNIĘCIA</Text>
             <SafeAreaView>
-                <CodeScanner definePallet={definePallet} />
+                <CodeScanner definePallet={definePallet} addPackage={addPackage} transfers={transfers} submitTransfer={submitTransfer} clearData={clearData}/>
             </SafeAreaView>
             {pallet !== null &&
                 <SafeAreaView>
