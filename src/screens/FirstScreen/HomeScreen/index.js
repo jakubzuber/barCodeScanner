@@ -21,7 +21,7 @@ const HomeScreen = () => {
             onPress={() => navigation.navigate('Transfers')}
             />
              <CustomButton 
-            text={'Przypisywanie do regału'}
+            text={'Przypisywanie'}
             onPress={() => navigation.navigate('Assignment')}
             />
             <CustomButton 

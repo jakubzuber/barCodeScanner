@@ -264,8 +264,16 @@ const getTransfersData = async ({ pallet }) => {
     try {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
-        SELECT * 
-        FROM STANY_MAGAZYNOWE with(nolock)
+        SELECT 
+        SM.*, 
+        a.* 
+        FROM STANY_MAGAZYNOWE SM with(nolock) OUTER APPLY (
+                                            select top 1
+                                            isnull(wp.OPIS,0) opis,
+                                            isnull(wp.ID,0) id_place
+                                            from WH_CARRIERS wc inner join WH_PLACES wp on wc.PLACE_ID = wp.ID
+                                            where wc.KOD_KRESKOWY = sm.PALETA_NUMER
+                                            ) a
         WHERE PALETA_NUMER = '${pallet}'
         `)
         return data
@@ -358,17 +366,42 @@ const transfer = async ({ cargo, fromPallet, toPallet }) => {
     };
 };
 
+const placeCheck = async ({ placeCode }) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        if exists (select 1 KOD_KRESKOWY from WH_PLACES where KOD  = '${placeCode}')
+            begin
+                select 1 KOD
+            end 
+        else 
+            begin
+                select 0 KOD
+            end
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
 
+const submitPlace = async ({pallet, place}) => {
+    console.log(place + ' ' + pallet)
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
 
-/*
-        ${cargo.map(item => {
-            `
-            
-
-
-            
-        `})}
-        */
+        update WH_CARRIERS
+        set PLACE_ID = (select top 1 ID from WH_PLACES where KOD = '${place}')
+        where KOD_KRESKOWY = '${pallet}'
+       
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
 
 module.exports = {
     validateLogIn,
@@ -384,5 +417,7 @@ module.exports = {
     getRemovalsData,
     getRemovalDetailsData,
     getTransfersData,
-    transfer
+    transfer,
+    placeCheck,
+    submitPlace,
 };
