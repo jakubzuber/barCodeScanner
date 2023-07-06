@@ -5,15 +5,23 @@ import CustomButton from '../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
 import { useDispatch } from 'react-redux';
 import { fetchTransfers } from '../Transfers/transfersSlice';
-import { submitPlaceAssignment } from './callToDatabase';
+import { fetchDiscription, submitPlaceAssignment } from './callToDatabase';
 
-const CodeScanner = ({ definePallet, transfers }) => {
+const CodeScanner = ({ definePallet }) => {
     const dispatch = useDispatch()
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
     const [text, setText] = useState('Zeskanuj paletę');
     const [isPalletScanned, setIsPalletScanned] = useState(false)
     const [pallet, setPallet] = useState();
+
+    const initailDiscription = {
+        id: 0, 
+        opis: 'Nie przypisane'
+    };
+    const [ discription, setDiscription ] = useState(initailDiscription);
+
+
     //permissions 
 
     useEffect(() => {
@@ -92,14 +100,17 @@ const CodeScanner = ({ definePallet, transfers }) => {
             setPallet(data)
             definePallet(data)
             dispatch(fetchTransfers({ pallet: data }))
+            const disc = await fetchDiscription(data)
+            if (disc[0].id !== 0) {
+                setDiscription({id: disc[0].id, opis: disc[0].opis})
+            } else {
+                setDiscription({id: 0, opis: 'Nie przypisano'})
+            }
         } else {
             const isPlaceChecked = await checkingPlace(data)
             if (isPlaceChecked[0].KOD === 1) {
                 submitPlaceAssignment(pallet, data)
                 scanNewPallet()
-                return (
-                    Alert.alert('Przypisuje do miejsca')
-                )
             } else {
                 return (
                     Alert.alert('Zeskanowany obiekt nie jest paletą ani miejscem w magazynie')
@@ -119,7 +130,7 @@ const CodeScanner = ({ definePallet, transfers }) => {
             </View>
             <View>
                 <Text style={styles.barCodeInfo}>{text}</Text>
-                {isPalletScanned &&  <Text style={styles.barCodeInfo}>{transfers[0].opis !== null ? transfers[0].opis : 'Paleta nie przypisana'}</Text>}
+                {isPalletScanned &&  <Text style={styles.barCodeInfo}>{discription.opis}</Text>}
                 {isPalletScanned && <CustomButton text={"Skanuj inną paletę"} type='INFO' onPress={() => scanNewPallet()} />}
             </View>
         </View>

@@ -18,7 +18,7 @@ const Assignment = () => {
         <View style={styles.root} >
             <Text style={styles.topic} >PRZYPISYWANIE</Text>
             <SafeAreaView>
-                <CodeScanner definePallet={definePallet} transfers={transfers}/>
+                <CodeScanner definePallet={definePallet}/>
             </SafeAreaView>
             {pallet !== null &&
                 <SafeAreaView>

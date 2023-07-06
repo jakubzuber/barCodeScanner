@@ -1,19 +1,18 @@
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Button, View, Text, Alert, BackHandler} from "react-native";
+import { Button, View, Text } from "react-native";
 import { useState, useEffect } from 'react';
 import CustomButton from '../../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
-import { useDispatch } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { selectCollection } from './collectionSlice';
 
 const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => {
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
     const [text, setText] = useState('Zeskanuj paletę');
     const [isPalletScanned, setIsPalletScanned] = useState(false)
-    const [pallet, setPallet] = useState()
-    const dispatch = useDispatch();
-    const navigation = useNavigation();
+
+    const { collection } = useSelector(selectCollection);
 
     //permissions 
 
@@ -59,7 +58,8 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
                 </BarCodeScanner>
             </View>
             <View>
-                <Text style={styles.barCodeInfo}>{text}</Text>
+                <Text style={styles.barCodeInfo}>Kieruj się do:</Text>
+                <Text style={styles.barCodeInfo}>{collection[0].placeOpis}</Text>
                 {isPalletScanned && <CustomButton text={"Skanuj na inną paletę"} type='INFO' onPress={() => scanNewPallet()} />}
             </View>
         </View>

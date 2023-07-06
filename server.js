@@ -91,4 +91,14 @@ app.post('/submitPlace', async(req, res) => {
     res.status(200).json({ success: true })
 });
 
+app.post('/fetchPlace', async(req, res) => {
+    const result = await dbOperation.fetchPlace(req.body);
+    res.send(result.recordset)
+});
+
+app.post('/fetchCollectionData', async(req, res) => {
+    const result = await dbOperation.fetchCollectionData(req.body);
+    res.send(result.recordset)
+});
+
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));

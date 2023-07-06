@@ -265,15 +265,8 @@ const getTransfersData = async ({ pallet }) => {
         let pool = await sql.connect(config);
         let data = await pool.request().query(`
         SELECT 
-        SM.*, 
-        a.* 
-        FROM STANY_MAGAZYNOWE SM with(nolock) OUTER APPLY (
-                                            select top 1
-                                            isnull(wp.OPIS,0) opis,
-                                            isnull(wp.ID,0) id_place
-                                            from WH_CARRIERS wc inner join WH_PLACES wp on wc.PLACE_ID = wp.ID
-                                            where wc.KOD_KRESKOWY = sm.PALETA_NUMER
-                                            ) a
+        SM.*
+        FROM STANY_MAGAZYNOWE SM with(nolock) 
         WHERE PALETA_NUMER = '${pallet}'
         `)
         return data
@@ -387,7 +380,6 @@ const placeCheck = async ({ placeCode }) => {
 };
 
 const submitPlace = async ({pallet, place}) => {
-    console.log(place + ' ' + pallet)
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
@@ -402,6 +394,64 @@ const submitPlace = async ({pallet, place}) => {
         console.log(error)
     };
 };
+
+const fetchPlace = async ({place}) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+                select top 1
+                isnull(wp.ID,0) id,
+                isnull(wp.OPIS,0) opis
+                from WH_CARRIERS wc left join WH_PLACES wp on wc.PLACE_ID = wp.ID
+                where wc.KOD_KRESKOWY = '${place}'
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const fetchCollectionData = async ({idOrder}) => {
+    try {
+        let pool = await sql.connect(config);
+        let data = await pool.request().query(`
+        select 
+        sm.ID whId,
+        sm.PALETA_NUMER,
+        sm.KOD_PRODUKTU,
+        sm.ILOSC,
+        sm.KOD_KRESKOWY,
+        b.placeId,
+        b.placeOpis,
+        b.placeCode,
+        b.placeOrder
+        from STANY_MAGAZYNOWE sm outer apply (select
+                                              wp.ID placeId,
+                                              wp.OPIS placeOpis,
+                                              wp.kod placeCode,
+                                              wp.KOLEJNOSC placeOrder,
+                                              wc.KOD_KRESKOWY palletCode
+                                              from WH_CARRIERS wc inner join WH_PLACES wp on wc.PLACE_ID = wp.ID
+                                              where sm.PALETA_NUMER = wc.KOD_KRESKOWY
+                                              ) b
+        where KOD_PRODUKTU in (
+                              select 
+                              ws.KOD_PROCUKTU
+                              from WYDANIA w with(nolock) 
+                              inner join WYDANIA_SZCZEGOLY ws with(nolock) on w.ID = ws.WYDANIE_ID
+                              where w.id = ${idOrder}
+                              and w.KLEINT_ID = sm.KLIENT_ID
+                              )
+      order by b.placeOrder 
+        `)
+        return data
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
 
 module.exports = {
     validateLogIn,
@@ -420,4 +470,6 @@ module.exports = {
     transfer,
     placeCheck,
     submitPlace,
+    fetchPlace,
+    fetchCollectionData
 };

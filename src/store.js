@@ -4,6 +4,7 @@ import newOrdersDetailSlice from "./screens/MainMenu/Entries/EntriesDetails/newO
 import removalsSlice from "./screens/MainMenu/Removals/removalsSlice";
 import removalsDetailSlice from "./screens/MainMenu/Removals/RemovalsDetails/removalsDetailSlice";
 import transfersSlice from "./screens/MainMenu/Transfers/transfersSlice";
+import collectionSlice from "./screens/MainMenu/Removals/RemovalsDetails/collectionSlice";
 
 export default configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export default configureStore({
         newOrdersDetails: newOrdersDetailSlice,
         removals: removalsSlice,
         removalDetails: removalsDetailSlice,
-        transfers: transfersSlice
+        transfers: transfersSlice,
+        collection: collectionSlice
     }
 });

@@ -5,6 +5,7 @@ import { styles } from "./styled";
 import CustomButton from "../../../../components/CustomButton/CustomButton";
 import CodeScanner from "./CodeScanner";
 import { fetchRemovalDetails, selectRemuvalsDetails } from "./removalsDetailSlice";
+import { fetchCollection, selectCollection } from './collectionSlice'
 
 const RemovalsDetils = ({ route }) => {
     const dispatch = useDispatch();
@@ -14,9 +15,11 @@ const RemovalsDetils = ({ route }) => {
 
     useEffect(() => {
         dispatch(fetchRemovalDetails(ID))
+        dispatch(fetchCollection(ID))
     }, [dispatch]);
 
     const { removalDetails } = useSelector(selectRemuvalsDetails);
+    const { collection } = useSelector(selectCollection);
 
     const toogleCamera = () => {
         setOpenCamera(!openCamera)
