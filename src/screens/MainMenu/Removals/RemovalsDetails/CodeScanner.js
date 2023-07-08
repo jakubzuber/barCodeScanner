@@ -1,5 +1,5 @@
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { Button, View, Text } from "react-native";
+import { Button, View, Text, Alert } from "react-native";
 import { useState, useEffect } from 'react';
 import CustomButton from '../../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
@@ -10,7 +10,8 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
     const [text, setText] = useState('Zeskanuj paletę');
-    const [isPalletScanned, setIsPalletScanned] = useState(false)
+    const [isPalletScanned, setIsPalletScanned] = useState(false);
+    const [pallet, setPallet] = useState();
 
     const { collection } = useSelector(selectCollection);
 
@@ -44,8 +45,66 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
         )
     };
 
+    // funkcje skanera
+
+    const scanNewPallet = () => {
+        setIsPalletScanned(false)
+        setText('Zeskanuj paletę')
+        definePallet(null)
+    };
+
+    const checkingPallet = async (pallet) => {
+        const palletCheck = await fetch('http://192.168.0.191:4999/palletCheck', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                palletCode: pallet
+            })
+        })
+            .then(res => res.json())
+        return palletCheck
+    };
+
     const handleBarCodeScanner = async ({ data }) => {
-       console.log(data)
+        setScanned(true)
+        const places = collection.map(col => col.PALETA_NUMER)
+        if (!isPalletScanned) {
+            const isPalletChek = await checkingPallet(data)
+            if (isPalletChek[0].KOD === 1) {
+                setIsPalletScanned(true)
+                setText(`Paleta: ${data}`)
+                definePallet(data)
+                setPallet(data)
+            } else {
+                return (
+                    Alert.alert('Nie zeskanowałeś palety')
+                )
+            }
+        } else {
+            if (pallet === data) {
+                return (
+                    Alert.alert('Skanujesz ponownie paletę!')
+                )
+            } else {
+                if (data === collection[0].PALETA_NUMER) {
+                    return (
+                        Alert.alert('Poprawna paleta')
+                    )
+                } else {
+                   if (places.includes(data)) {
+                        return (
+                            Alert.alert('Ta paleta również ma towar do tego pobrania')
+                        )
+                   } else {
+                        Alert.alert('Zeskanowano błędną paletę. Nie ma na niej towaru do pobrania')
+                   }
+                }
+            }
+        }
+        
     };
 
     return (
@@ -60,6 +119,7 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
             <View>
                 <Text style={styles.barCodeInfo}>Kieruj się do:</Text>
                 <Text style={styles.barCodeInfo}>{collection[0].placeOpis}</Text>
+                {isPalletScanned && <Text style={styles.barCodeInfo}>Pobranie na: {pallet}</Text>}
                 {isPalletScanned && <CustomButton text={"Skanuj na inną paletę"} type='INFO' onPress={() => scanNewPallet()} />}
             </View>
         </View>
