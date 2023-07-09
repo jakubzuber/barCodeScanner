@@ -24,6 +24,11 @@ const collectionSlice = createSlice({
         error: ''
     },
     reducers: {
+        removeFromWh: ({collection}, {payload: place}) => {
+            const index = collection.findIndex(({ whId }) => whId === place)
+            collection[index].ILOSC = collection[index].ILOSC - 1
+            //addScanToDatabase(itemId)
+        },
     },
     extraReducers: builder => {
         builder.addCase(fetchCollection.pending, (state) => {
@@ -41,6 +46,10 @@ const collectionSlice = createSlice({
         })
     }
 })
+
+export const { 
+    removeFromWh
+} = collectionSlice.actions;
 
 export const selectCollection = state => state.collection
 

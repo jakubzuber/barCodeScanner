@@ -23,14 +23,14 @@ const remuvalDetailsSlice = createSlice({
         error: ''
     },
     reducers: {
-        addScan: ({newOrdersDetails}, {payload: itemId}) => {
-            const index = newOrdersDetails.findIndex(({ ID }) => ID === itemId)
-            newOrdersDetails[index].ZESKANOWANE = newOrdersDetails[index].ZESKANOWANE + 1
+        addScan: ({removalDetails}, {payload: itemId}) => {
+            const index = removalDetails.findIndex(({ ID }) => ID === itemId)
+            removalDetails[index].ZESKANOWANE = removalDetails[index].ZESKANOWANE + 1
             //addScanToDatabase(itemId)
         },
-        deductScan: ({newOrdersDetails}, {payload: itemId}) => {
-            const index = newOrdersDetails.findIndex(({ ID }) => ID === itemId)
-            newOrdersDetails[index].ZESKANOWANE = newOrdersDetails[index].ZESKANOWANE - 1
+        deductScan: ({removalDetails}, {payload: itemId}) => {
+            const index = removalDetails.findIndex(({ ID }) => ID === itemId)
+            removalDetails[index].ZESKANOWANE = removalDetails[index].ZESKANOWANE - 1
             //deductScanFromDatabase(itemId)
         },
     },
@@ -51,12 +51,12 @@ const remuvalDetailsSlice = createSlice({
     }
 })
 
-/*
+
 export const { 
     addScan,
     deductScan
-} = newOrdersDetailsSlice.actions;
-*/
+} = remuvalDetailsSlice.actions;
+
 
 export const selectRemuvalsDetails = state => state.removalDetails
 

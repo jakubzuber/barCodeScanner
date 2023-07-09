@@ -6,12 +6,13 @@ import { styles } from './styled';
 import { useSelector } from 'react-redux';
 import { selectCollection } from './collectionSlice';
 
-const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => {
+const CodeScanner = ({ definePallet, removalDetails, definePlace }) => {
     const [hasPermission, setHasPermission] = useState(false);
     const [scanned, setScanned] = useState(true);
     const [text, setText] = useState('Zeskanuj paletę');
     const [isPalletScanned, setIsPalletScanned] = useState(false);
     const [pallet, setPallet] = useState();
+    const [place, setPlace] = useState('aaaa');
 
     const { collection } = useSelector(selectCollection);
 
@@ -78,6 +79,7 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
                 setText(`Paleta: ${data}`)
                 definePallet(data)
                 setPallet(data)
+                setPlace(collection[0].placeOpis)
             } else {
                 return (
                     Alert.alert('Nie zeskanowałeś palety')
@@ -86,14 +88,13 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
         } else {
             if (pallet === data) {
                 return (
-                    Alert.alert('Skanujesz ponownie paletę!')
+                    Alert.alert('Skanujesz ponownie tą samą paletę!')
                 )
             } else {
                 if (data === collection[0].PALETA_NUMER) {
-                    return (
-                        Alert.alert('Poprawna paleta')
-                    )
-                } else {
+                    const dataToScan = collection.filter(col => col.PALETA_NUMER === data).map(col => ({kodProduktu: col.KOD_PRODUKTU, ilosc: col.ILOSC, idMiejsca: col.whId}))
+                    definePlace(dataToScan)
+                } else { 
                    if (places.includes(data)) {
                         return (
                             Alert.alert('Ta paleta również ma towar do tego pobrania')
@@ -117,8 +118,9 @@ const CodeScanner = ({ definePallet, removalDetails, klientId, klientName }) => 
                 </BarCodeScanner>
             </View>
             <View>
-                <Text style={styles.barCodeInfo}>Kieruj się do:</Text>
-                <Text style={styles.barCodeInfo}>{collection[0].placeOpis}</Text>
+                {!isPalletScanned && <Text style={styles.barCodeInfo}>Zeskanuj paletę na którą chcesz pobrać towar.</Text>}
+                {isPalletScanned && <Text style={styles.barCodeInfo}>Kieruj się do:</Text>}
+                {isPalletScanned && <Text style={styles.barCodeInfo}>{place}</Text>}
                 {isPalletScanned && <Text style={styles.barCodeInfo}>Pobranie na: {pallet}</Text>}
                 {isPalletScanned && <CustomButton text={"Skanuj na inną paletę"} type='INFO' onPress={() => scanNewPallet()} />}
             </View>

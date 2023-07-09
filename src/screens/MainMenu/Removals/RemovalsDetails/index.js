@@ -4,14 +4,22 @@ import { useEffect, useState } from "react";
 import { styles } from "./styled";
 import CustomButton from "../../../../components/CustomButton/CustomButton";
 import CodeScanner from "./CodeScanner";
-import { fetchRemovalDetails, selectRemuvalsDetails } from "./removalsDetailSlice";
-import { fetchCollection, selectCollection } from './collectionSlice'
+import { addScan, fetchRemovalDetails, selectRemuvalsDetails } from "./removalsDetailSlice";
+import { fetchCollection, selectCollection, removeFromWh } from './collectionSlice'
 
 const RemovalsDetils = ({ route }) => {
     const dispatch = useDispatch();
     const [openCamera, setOpenCamera] = useState(false);
     const { ID, KLIENT, ODBIORCA, K_ID } = route.params
-    const [pallet, setPallet] = useState(null)
+    const [pallet, setPallet] = useState(null);
+    const [place, setPlace] = useState(false)
+
+    const initialPlace = {
+        idMiejsca: 0,
+        ilosc: 0,
+        kodProduktu: ''
+    }
+    const [data, setData] = useState(initialPlace);
 
     useEffect(() => {
         dispatch(fetchRemovalDetails(ID))
@@ -29,38 +37,46 @@ const RemovalsDetils = ({ route }) => {
         setPallet(data)
     };
 
-    /*
+    const definePlace = (data) => {
+        setPlace(true)
+        setData(data)
+    };
+
     const addPackage = (props) => {
-        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === props)
-        if (order[0].ZESKANOWANE < order[0].ILOSC) {
-            dispatch(addScan(props))
-            addScanToWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, symbol: order[0].NAZWA_PRODUKTU, number: order[0].ZESKANOWANE, klientId: K_ID, klient: KLIENT, przyjecie: ID, kod_kreskowy: order[0].KOD_KRESKOWY})
-        } else {
+        const placeToDeduct = data.filter(data => data.kodProduktu === props);
+        const detailsToDeduct = removalDetails.filter(removalDetails => removalDetails.KOD_PROCUKTU === props);
+        if ( detailsToDeduct[0].ZESKANOWANE === detailsToDeduct[0].ILOSC ) {
             return (
-                Alert.alert('Wszystko zostało zeskanowane')
+                Alert.alert('Nie możesz więcej dodać')
             )
-        }   
+        } else {
+            const index = data.findIndex(({kodProduktu}) => kodProduktu === props);
+            dispatch(addScan(detailsToDeduct[0].ID))
+            dispatch(removeFromWh(placeToDeduct[0].idMiejsca))
+            if (placeToDeduct[0].ilosc > 1) {
+                setData(state => [...state, state[index].ilosc = state[index].ilosc - 1])
+            } else {
+                setData(details => details.filter((s,i) => i !== index))
+            }
+            
+        }
     };
 
     const deductPackage = (props) => {
-        const order = newOrdersDetails.filter(newOrdersDetails => newOrdersDetails.ID === props)
-        if (order[0].ZESKANOWANE > 0) {
-            dispatch(deductScan(props))
-            deleteFromWh({pallet: Number(pallet), code: order[0].KOD_PRODUKTU, klientId: K_ID, przyjecie: ID})
-        } else {
-            return (
-                Alert.alert('Nie możesz więcej odjąć')
-            )
-        }   
+        const placeToDeduct = data.filter(data => data.kodProduktu === props)
+        const detailsToDeduct = removalDetails.filter(removalDetails => removalDetails.KOD_PROCUKTU === props);
     };
 
-*/
+
+    //console.log(removalDetails)
+
+
     return (
         <View style={styles.root} >
             <Text style={styles.topic} >{KLIENT} - {ODBIORCA}</Text>
             <CustomButton text={openCamera ? 'Zamknij aparat' : 'Otwórz aparat'} type="TERTIARY" onPress={() => toogleCamera()}></CustomButton>
             {openCamera &&
-                <CodeScanner definePallet={definePallet} removalDetails={removalDetails} klientId={K_ID} klientName={KLIENT}/>}
+                <CodeScanner definePlace={definePlace} definePallet={definePallet} removalDetails={removalDetails} />}
             <SafeAreaView>
                 <FlatList
                     data={removalDetails}
@@ -72,7 +88,15 @@ const RemovalsDetils = ({ route }) => {
                                     <Text style={styles.text} >{item.PAKOWANIE}</Text>
                                     <Text style={styles.text} >{item.UWAGI}</Text>
                                 </View>
-                               
+                                <View>
+                                    {place && data.map(place => place.kodProduktu).includes(item.KOD_PROCUKTU) &&
+                                        <View style={styles.plusMinusContainer}>
+                                            <Text style={styles.plusText} onPress={() => addPackage(item.KOD_PROCUKTU)}>+</Text>
+                                            <Text style={styles.minusText} onPress={() => deductPackage(item.KOD_PROCUKTU)}>-</Text>
+                                        </View>
+                                    }
+
+                                </View>
                                 <View>
                                     <Text style={styles.text} >Skany:</Text>
                                     <Text style={styles.text} >{item.ZESKANOWANE}/{item.ILOSC}</Text>
