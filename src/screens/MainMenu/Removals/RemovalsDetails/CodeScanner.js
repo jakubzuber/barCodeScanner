@@ -92,13 +92,12 @@ const CodeScanner = ({ definePallet, removalDetails, definePlace }) => {
                 )
             } else {
                 if (data === collection[0].PALETA_NUMER) {
-                    const dataToScan = collection.filter(col => col.PALETA_NUMER === data).map(col => ({kodProduktu: col.KOD_PRODUKTU, ilosc: col.ILOSC, idMiejsca: col.whId}))
+                    const dataToScan = collection.filter(col => col.PALETA_NUMER === data).map(col => ({kodProduktu: col.KOD_PRODUKTU, ilosc: col.ILOSC, idMiejsca: col.whId, kodPalety: col.PALETA_NUMER, klientId: col.KLIENT_ID, klientNazwa: col.KLIENT_NAZWA}))
                     definePlace(dataToScan)
                 } else { 
                    if (places.includes(data)) {
-                        return (
-                            Alert.alert('Ta paleta również ma towar do tego pobrania')
-                        )
+                        const dataToScan = collection.filter(col => col.PALETA_NUMER === data).map(col => ({kodProduktu: col.KOD_PRODUKTU, ilosc: col.ILOSC, idMiejsca: col.whId}))
+                        definePlace(dataToScan)
                    } else {
                         Alert.alert('Zeskanowano błędną paletę. Nie ma na niej towaru do pobrania')
                    }

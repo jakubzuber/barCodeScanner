@@ -36,3 +36,25 @@ export const takeFromInventory = async(ID) => {
         })
     })
 };
+
+export const addToPositions = async({detailsId, whPlace, pallet, productCode, idRemovals, productBarcode, klinetId, klientNazwa, oldPallet, productName}) => {
+    await fetch('http://192.168.0.191:4999/addToPossitions', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            detailsId: detailsId,
+            pallet: pallet,
+            whPlace: whPlace,
+            productCode: productCode,
+            idRemovals: idRemovals,
+            productBarcode: productBarcode,
+            klinetId: klinetId,
+            klientNazwa: klientNazwa,
+            oldPallet: oldPallet,
+            productName: productName
+        })
+    })
+};

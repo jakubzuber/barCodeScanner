@@ -4,10 +4,10 @@ export const styles = StyleSheet.create({
     root: {
         alignItems: 'center',
         padding: 20,
-        marginTop: 40
+        marginTop: 20,
     },
     text: {
-        fontSize: 11,
+        fontSize: 10,
         color: 'white',
         maxWidth: 170,
         padding: 1,
@@ -46,8 +46,8 @@ export const styles = StyleSheet.create({
     barCodeInfo: {
         backgroundColor: '#fff',
         textAlign: 'center',
-        padding: 5,
-        fontSize: 20
+        padding: 2,
+        fontSize: 18
     },
     plusMinusContainer: {
         display: 'flex',

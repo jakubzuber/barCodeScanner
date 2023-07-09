@@ -6,6 +6,7 @@ import CustomButton from "../../../../components/CustomButton/CustomButton";
 import CodeScanner from "./CodeScanner";
 import { addScan, fetchRemovalDetails, selectRemuvalsDetails } from "./removalsDetailSlice";
 import { fetchCollection, selectCollection, removeFromWh } from './collectionSlice'
+import { addToPositions } from "../callsToDatabase";
 
 const RemovalsDetils = ({ route }) => {
     const dispatch = useDispatch();
@@ -14,12 +15,7 @@ const RemovalsDetils = ({ route }) => {
     const [pallet, setPallet] = useState(null);
     const [place, setPlace] = useState(false)
 
-    const initialPlace = {
-        idMiejsca: 0,
-        ilosc: 0,
-        kodProduktu: ''
-    }
-    const [data, setData] = useState(initialPlace);
+    const [data, setData] = useState(null);
 
     useEffect(() => {
         dispatch(fetchRemovalDetails(ID))
@@ -45,18 +41,30 @@ const RemovalsDetils = ({ route }) => {
     const addPackage = (props) => {
         const placeToDeduct = data.filter(data => data.kodProduktu === props);
         const detailsToDeduct = removalDetails.filter(removalDetails => removalDetails.KOD_PROCUKTU === props);
-        if ( detailsToDeduct[0].ZESKANOWANE === detailsToDeduct[0].ILOSC ) {
+        if (detailsToDeduct[0].ZESKANOWANE === detailsToDeduct[0].ILOSC) {
             return (
                 Alert.alert('Nie możesz więcej dodać')
             )
         } else {
-            const index = data.findIndex(({kodProduktu}) => kodProduktu === props);
+            const index = data.findIndex(({ kodProduktu }) => kodProduktu === props);
             dispatch(addScan(detailsToDeduct[0].ID))
             dispatch(removeFromWh(placeToDeduct[0].idMiejsca))
+            addToPositions({
+                detailsId: detailsToDeduct[0].ID,
+                whPlace: placeToDeduct[0].idMiejsca,
+                pallet: pallet,
+                productCode: detailsToDeduct[0].KOD_PROCUKTU,
+                idRemovals: detailsToDeduct[0].WYDANIE_ID,
+                productBarcode: detailsToDeduct[0].KOD_KRESKOWY,
+                klinetId: placeToDeduct[0].klientId,
+                klientNazwa: placeToDeduct[0].klientNazwa,
+                oldPallet: placeToDeduct[0].kodPalety,
+                productName: detailsToDeduct[0].NAZWA_PRODUKTU
+            })
             if (placeToDeduct[0].ilosc > 1) {
                 setData(state => [...state, state[index].ilosc = state[index].ilosc - 1])
             } else {
-                setData(details => details.filter((s,i) => i !== index))
+                setData(details => details.filter((s, i) => i !== index))
             }
         }
     };

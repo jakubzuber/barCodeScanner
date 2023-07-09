@@ -184,7 +184,6 @@ const deleteFromWh = async (data) => {
 };
 
 const closeOrder = async ({ ID }) => {
-    console.log(ID)
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
@@ -425,7 +424,9 @@ const fetchCollectionData = async ({idOrder}) => {
         b.placeId,
         b.placeOpis,
         b.placeCode,
-        b.placeOrder
+        b.placeOrder,
+        sm.KLIENT_ID,
+		sm.KLIENT_NAZWA
         from STANY_MAGAZYNOWE sm outer apply (select
                                               wp.ID placeId,
                                               wp.OPIS placeOpis,
@@ -470,7 +471,7 @@ const takeFromInventory = async ({ ID }) => {
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
-        declare @check int = 1 --(select ILOSC from STANY_MAGAZYNOWE where id = ${ID})
+        declare @check int = (select ILOSC from STANY_MAGAZYNOWE where id = ${ID})
   
         if @check > 1
 	        begin
@@ -494,6 +495,7 @@ const closeRemovalOrder = async ({ ID }) => {
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
+        
         update WYDANIA
         set OBSLUGA_KONIEC = getdate()
         where id = ${ID}
@@ -506,7 +508,34 @@ const closeRemovalOrder = async ({ ID }) => {
         where id = ${ID}
 
         delete from WYDANIA_SZCZEGOLY
-        where id = ${ID}
+        where WYDANIE_ID = ${ID}
+
+        delete from WYDANIA_POZYCJE
+        where WYDANIE_ID = ${ID}
+    `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const addToPossitions = async ({detailsId, whPlace, pallet, productCode, idRemovals, productBarcode, klinetId, klientNazwa, oldPallet, productName}) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        if exists (select 1 from WYDANIA_POZYCJE where WYDANIE_SZCZEGOLY_ID = ${detailsId} and PALETA = '${pallet}' and KOD = '${productCode}' and hist_oldPallet = '${oldPallet}')
+	        begin
+		        update WYDANIA_POZYCJE
+		        set ILOSC = isnull(ILOSC,0) + 1
+		        where WYDANIE_SZCZEGOLY_ID = ${detailsId} 
+                and PALETA = '${pallet}' 
+                and KOD = '${productCode}'
+	        end
+        else 
+	        begin
+		        INSERT INTO WYDANIA_POZYCJE (WYDANIE_SZCZEGOLY_ID, PALETA, KOD, ILOSC, WYDANIE_ID, KOD_KREKOSWY_TOWARU, hist_whPlace, hist_klientId, hist_klientNazwa, hist_oldPallet, NAZWA_PRODUKTU)
+		        VALUES (${detailsId}, '${pallet}', '${productCode}', 1, ${idRemovals}, '${productBarcode}', ${whPlace}, ${klinetId}, '${klientNazwa}', '${oldPallet}', '${productName}')
+	        end
     `)
     }
     catch (error) {
@@ -536,5 +565,6 @@ module.exports = {
     fetchCollectionData,
     addItemToDatabase,
     takeFromInventory,
-    closeRemovalOrder
+    closeRemovalOrder,
+    addToPossitions
 };
