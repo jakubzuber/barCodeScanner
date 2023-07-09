@@ -22,7 +22,6 @@ const Removals = () => {
         navigation.navigate('RemovalsDetails', { ID: ID, KLIENT: KLIENT, ODBIORCA: ODBIORCA, K_ID: KLIENT_ID });
     };
     
-
     const createTwoButtonAlert = (ID) =>
     Alert.alert('Zakończenie obsługi', 'Czy na napewno chcesz zakończyć obsługę tego zlecenia?', [
       {
@@ -33,7 +32,7 @@ const Removals = () => {
     ]);
 
     const onCloseOrder = (ID) => {
-        //closeRemovalOrder(ID) -- do skończenia !!!!!!!!!!!
+        closeRemovalOrder(ID)
         dispatch(fetchRemovals())
     };
 

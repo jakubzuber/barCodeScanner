@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { addToDatabase } from "../callsToDatabase";
 
 export const fetchRemovalDetails = createAsyncThunk('routes/fetchRemovalDetails', async (ID) => {
     const response = await fetch('http://192.168.0.191:4999/apiFetchRemovalDetails', {
@@ -26,7 +27,7 @@ const remuvalDetailsSlice = createSlice({
         addScan: ({removalDetails}, {payload: itemId}) => {
             const index = removalDetails.findIndex(({ ID }) => ID === itemId)
             removalDetails[index].ZESKANOWANE = removalDetails[index].ZESKANOWANE + 1
-            //addScanToDatabase(itemId)
+            addToDatabase(itemId)
         },
     },
     extraReducers: builder => {
@@ -48,8 +49,7 @@ const remuvalDetailsSlice = createSlice({
 
 
 export const { 
-    addScan,
-    deductScan
+    addScan
 } = remuvalDetailsSlice.actions;
 
 

@@ -99,12 +99,5 @@ const RemovalsDetils = ({ route }) => {
         </View>
     );
 };
-/*
-{pallet !== null &&
-    <View style={styles.plusMinusContainer}>
-        <Text style={styles.plusText} onPress={() => addPackage(item.ID)}>+</Text>
-        <Text style={styles.minusText} onPress={() => deductPackage(item.ID)}>-</Text>
-    </View>
-}
-*/
+
 export default RemovalsDetils;

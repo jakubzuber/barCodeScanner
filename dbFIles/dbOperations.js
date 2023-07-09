@@ -452,6 +452,68 @@ const fetchCollectionData = async ({idOrder}) => {
     };
 };
 
+const addItemToDatabase = async ({ ID }) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        update WYDANIA_SZCZEGOLY
+        set ZESKANOWANE = isnull(ZESKANOWANE,0) + 1
+        where id = ${ID} 
+        `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const takeFromInventory = async ({ ID }) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        declare @check int = 1 --(select ILOSC from STANY_MAGAZYNOWE where id = ${ID})
+  
+        if @check > 1
+	        begin
+		        update STANY_MAGAZYNOWE
+		        set ILOSC = ILOSC - 1
+		        where ID = ${ID}
+	        end
+        else
+	        begin
+		        delete from STANY_MAGAZYNOWE
+		        where id = ${ID}
+	    end
+    `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
+const closeRemovalOrder = async ({ ID }) => {
+    try {
+        let pool = await sql.connect(config);
+        await pool.request().query(`
+        update WYDANIA
+        set OBSLUGA_KONIEC = getdate()
+        where id = ${ID}
+
+        delete from WYDANIA
+        where id = ${ID}
+
+        update WYDANIA_SZCZEGOLY
+        set ROZBIEZNOSCI = ILOSC - isnull(ZESKANOWANE,ILOSC)
+        where id = ${ID}
+
+        delete from WYDANIA_SZCZEGOLY
+        where id = ${ID}
+    `)
+    }
+    catch (error) {
+        console.log(error)
+    };
+};
+
 
 module.exports = {
     validateLogIn,
@@ -471,5 +533,8 @@ module.exports = {
     placeCheck,
     submitPlace,
     fetchPlace,
-    fetchCollectionData
+    fetchCollectionData,
+    addItemToDatabase,
+    takeFromInventory,
+    closeRemovalOrder
 };

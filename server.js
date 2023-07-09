@@ -101,4 +101,19 @@ app.post('/fetchCollectionData', async(req, res) => {
     res.send(result.recordset)
 });
 
+app.post('/addItemToDatabase', async(req, res) => {
+    const result = await dbOperation.addItemToDatabase(req.body);
+    res.status(200).json({ success: true })
+});
+
+app.post('/takeFromInventory', async(req, res) => {
+    const result = await dbOperation.takeFromInventory(req.body);
+    res.status(200).json({ success: true })
+});
+
+app.post('/closeRemovalOrder', async(req, res) => {
+    const result = await dbOperation.closeRemovalOrder(req.body);
+    res.status(200).json({ success: true })
+});
+
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { takeFromInventory } from "../callsToDatabase";
 
 export const fetchCollection = createAsyncThunk('routes/fetchCollection', async (id) => {
     const response = await fetch('http://192.168.0.191:4999/fetchCollectionData', {
@@ -27,8 +28,8 @@ const collectionSlice = createSlice({
         removeFromWh: ({collection}, {payload: place}) => {
             const index = collection.findIndex(({ whId }) => whId === place)
             collection[index].ILOSC = collection[index].ILOSC - 1
-            //addScanToDatabase(itemId)
-        },
+            takeFromInventory(place)
+       },
     },
     extraReducers: builder => {
         builder.addCase(fetchCollection.pending, (state) => {
