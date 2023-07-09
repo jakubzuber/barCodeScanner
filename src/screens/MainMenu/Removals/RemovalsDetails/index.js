@@ -58,17 +58,8 @@ const RemovalsDetils = ({ route }) => {
             } else {
                 setData(details => details.filter((s,i) => i !== index))
             }
-            
         }
     };
-
-    const deductPackage = (props) => {
-        const placeToDeduct = data.filter(data => data.kodProduktu === props)
-        const detailsToDeduct = removalDetails.filter(removalDetails => removalDetails.KOD_PROCUKTU === props);
-    };
-
-
-    //console.log(removalDetails)
 
 
     return (
@@ -92,7 +83,6 @@ const RemovalsDetils = ({ route }) => {
                                     {place && data.map(place => place.kodProduktu).includes(item.KOD_PROCUKTU) &&
                                         <View style={styles.plusMinusContainer}>
                                             <Text style={styles.plusText} onPress={() => addPackage(item.KOD_PROCUKTU)}>+</Text>
-                                            <Text style={styles.minusText} onPress={() => deductPackage(item.KOD_PROCUKTU)}>-</Text>
                                         </View>
                                     }
 

@@ -28,11 +28,6 @@ const remuvalDetailsSlice = createSlice({
             removalDetails[index].ZESKANOWANE = removalDetails[index].ZESKANOWANE + 1
             //addScanToDatabase(itemId)
         },
-        deductScan: ({removalDetails}, {payload: itemId}) => {
-            const index = removalDetails.findIndex(({ ID }) => ID === itemId)
-            removalDetails[index].ZESKANOWANE = removalDetails[index].ZESKANOWANE - 1
-            //deductScanFromDatabase(itemId)
-        },
     },
     extraReducers: builder => {
         builder.addCase(fetchRemovalDetails.pending, (state) => {
