@@ -187,8 +187,17 @@ const closeOrder = async ({ ID }) => {
     try {
         let pool = await sql.connect(config);
         await pool.request().query(`
+
+        update PRZYJECIA1
+        set OBSLUGA_KONIEC = getdate()
+        where id = ${ID}
+
         DELETE FROM PRZYJECIA1
         WHERE ID = ${ID}
+
+        update PRZYJECIA_SZCZEGOLY
+        set ROZBIEZNOSC = ILOSC - isnull(ZESKANOWANE,ILOSC)
+        where id = ${ID}
 
         DELETE FROM PRZYJECIA_SZCZEGOLY
         WHERE PRZYJECIE_ID = ${ID}
