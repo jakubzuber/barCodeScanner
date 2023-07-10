@@ -50,7 +50,7 @@ const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) =
     // handle scan
 
     const checkingPallet = async (pallet) => {
-        const palletCheck = await fetch('http://192.168.0.191:4999/palletCheck', {
+        const palletCheck = await fetch('http://10.0.0.153:4999/palletCheck', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',

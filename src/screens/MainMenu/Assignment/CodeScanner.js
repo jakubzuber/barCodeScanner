@@ -62,7 +62,7 @@ const CodeScanner = ({ definePallet }) => {
     };
 
     const checkingPallet = async (pallet) => {
-        const palletCheck = await fetch('http://192.168.0.191:4999/palletCheck', {
+        const palletCheck = await fetch('http://10.0.0.153:4999/palletCheck', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -77,7 +77,7 @@ const CodeScanner = ({ definePallet }) => {
     };
 
     const checkingPlace = async (place) => {
-        const placeCheck = await fetch('http://192.168.0.191:4999/placeCheck', {
+        const placeCheck = await fetch('http://10.0.0.153:4999/placeCheck', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',

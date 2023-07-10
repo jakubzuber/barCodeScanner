@@ -2,7 +2,7 @@
   "name": "scanner",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
-  "proxy": "http://192.168.0.194:4999",
+  "proxy": "http://10.0.0.153:4999",
   "scripts": {
     "start": "expo start",
     "server": "nodemon server.js",

@@ -1,5 +1,5 @@
 export const closeRemovalOrder = async(ID) => {
-    await fetch('http://192.168.0.191:4999/closeRemovalOrder', {
+    await fetch('http://10.0.0.153:4999/closeRemovalOrder', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -12,7 +12,7 @@ export const closeRemovalOrder = async(ID) => {
 };
 
 export const addToDatabase = async(ID) => {
-    await fetch('http://192.168.0.191:4999/addItemToDatabase', {
+    await fetch('http://10.0.0.153:4999/addItemToDatabase', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -25,7 +25,7 @@ export const addToDatabase = async(ID) => {
 };
 
 export const takeFromInventory = async(ID) => {
-    await fetch('http://192.168.0.191:4999/takeFromInventory', {
+    await fetch('http://10.0.0.153:4999/takeFromInventory', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -38,7 +38,7 @@ export const takeFromInventory = async(ID) => {
 };
 
 export const addToPositions = async({detailsId, whPlace, pallet, productCode, idRemovals, productBarcode, klinetId, klientNazwa, oldPallet, productName}) => {
-    await fetch('http://192.168.0.191:4999/addToPossitions', {
+    await fetch('http://10.0.0.153:4999/addToPossitions', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',

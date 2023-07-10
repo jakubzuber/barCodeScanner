@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import { styles } from './styled';
 import { useDispatch } from 'react-redux';
-import { fetchTransfers } from '../Transfers/transfersSlice';
-import { useNavigation } from '@react-navigation/native';
+import { fetchInventory } from './inventorySlice';
 
 const CodeScanner = ({ definePallet }) => {
     const dispatch = useDispatch()
@@ -55,7 +54,7 @@ const CodeScanner = ({ definePallet }) => {
     };
 
     const checkingPallet = async (pallet) => {
-        const palletCheck = await fetch('http://192.168.0.191:4999/palletCheck', {
+        const palletCheck = await fetch('http://10.0.0.153:4999/palletCheck', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -77,7 +76,7 @@ const CodeScanner = ({ definePallet }) => {
             setText(`Paleta: ${data}`)
             setPallet(data)
             definePallet(data)
-            dispatch(fetchTransfers({ pallet: data }))
+            dispatch(fetchInventory({ pallet: data }))
         } else {
             return (
                 Alert.alert('Nie zeskanowałeś palety')

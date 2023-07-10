@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addScanToDatabase, deductScanFromDatabase } from "../callsToDatabase";
 
 export const fetchNewOrdersDetails = createAsyncThunk('routes/fetchNewOrdersDetails', async (ID) => {
-    const response = await fetch('http://192.168.0.191:4999/apiFetchNewOrdersDetails', {
+    const response = await fetch('http://10.0.0.153:4999/apiFetchNewOrdersDetails', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',

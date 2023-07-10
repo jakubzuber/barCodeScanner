@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 export const fetchRemovals = createAsyncThunk('routes/fetchRemovals', async () => {
-    const response = await fetch('http://192.168.0.191:4999/apiFetchRemovals', {
+    const response = await fetch('http://10.0.0.153:4999/apiFetchRemovals', {
         method: 'GET',
         headers: {
             'content-type': 'application/json',
