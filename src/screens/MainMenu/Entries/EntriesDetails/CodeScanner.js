@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { addScan } from './newOrdersDetailSlice';
 import { addScanToWh } from '../callsToDatabase';
 import { useNavigation } from '@react-navigation/native';
+import { ip } from '../../../../ipconfig';
 
 const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) => {
     const [hasPermission, setHasPermission] = useState(false);
@@ -50,7 +51,7 @@ const CodeScanner = ({ definePallet, newOrdersDetails, klientId, klientName }) =
     // handle scan
 
     const checkingPallet = async (pallet) => {
-        const palletCheck = await fetch('http://10.0.0.153:4999/palletCheck', {
+        const palletCheck = await fetch(`http://${ip}:4999/palletCheck`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',

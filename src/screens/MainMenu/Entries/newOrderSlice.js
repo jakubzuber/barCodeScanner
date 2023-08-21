@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { ip } from "../../../ipconfig";
 
 export const fetchNewOrders = createAsyncThunk('routes/fetchNewOrders', async () => {
-    const response = await fetch('http://10.0.0.153:4999/apiFetchNewOrders', {
+    const response = await fetch(`http://${ip}:4999/apiFetchNewOrders`, {
         method: 'GET',
         headers: {
             'content-type': 'application/json',

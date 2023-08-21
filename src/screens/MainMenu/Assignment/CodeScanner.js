@@ -6,6 +6,7 @@ import { styles } from './styled';
 import { useDispatch } from 'react-redux';
 import { fetchTransfers } from '../Transfers/transfersSlice';
 import { fetchDiscription, submitPlaceAssignment } from './callToDatabase';
+import { ip } from '../../../ipconfig';
 
 const CodeScanner = ({ definePallet }) => {
     const dispatch = useDispatch()
@@ -62,7 +63,7 @@ const CodeScanner = ({ definePallet }) => {
     };
 
     const checkingPallet = async (pallet) => {
-        const palletCheck = await fetch('http://10.0.0.153:4999/palletCheck', {
+        const palletCheck = await fetch(`http://${ip}:4999/palletCheck`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -77,7 +78,7 @@ const CodeScanner = ({ definePallet }) => {
     };
 
     const checkingPlace = async (place) => {
-        const placeCheck = await fetch('http://10.0.0.153:4999/placeCheck', {
+        const placeCheck = await fetch(`http://${ip}:4999/placeCheck`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',

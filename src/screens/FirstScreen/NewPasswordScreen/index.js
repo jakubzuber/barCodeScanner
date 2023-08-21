@@ -4,14 +4,14 @@ import { useForm } from 'react-hook-form';
 import CustomInput from '../../../components/CustomInput/CustomInput';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-
+import { ip } from '../../../ipconfig'
 
 const NewPasswordScreen = ({route}) => {
     const navigation = useNavigation();
     const { login, password } = route.params;
     
      const sendNewPassword = async(newDetails) => {
-        await fetch('http://10.0.0.153:4999/valideLogIn/newPasswrod', {
+        await fetch(`http://${ip}:4999/valideLogIn/newPasswrod`, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',

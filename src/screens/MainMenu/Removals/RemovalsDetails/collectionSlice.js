@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { takeFromInventory } from "../callsToDatabase";
 
 export const fetchCollection = createAsyncThunk('routes/fetchCollection', async (id) => {
-    const response = await fetch('http://10.0.0.153:4999/fetchCollectionData', {
+    const response = await fetch(`http://${ip}:4999/fetchCollectionData`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',

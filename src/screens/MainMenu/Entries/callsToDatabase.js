@@ -1,6 +1,6 @@
 
 export const addScanToDatabase = async (id) => {
-    await fetch('http://10.0.0.153:4999/addScan', {
+    await fetch(`http://${ip}:4999/addScan`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -13,7 +13,7 @@ export const addScanToDatabase = async (id) => {
 };
 
 export const addScanToWh = async (data) => {
-    await fetch('http://10.0.0.153:4999/addToWh', {
+    await fetch(`http://${ip}:4999/addToWh`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -35,7 +35,7 @@ export const addScanToWh = async (data) => {
 };
 
 export const deleteFromWh = async (data) => {
-    await fetch('http://10.0.0.153:4999/deleteFromWh', {
+    await fetch(`http://${ip}:4999/deleteFromWh`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -50,7 +50,7 @@ export const deleteFromWh = async (data) => {
 };
 
 export const deductScanFromDatabase = async (id) => {
-    await fetch('http://10.0.0.153:4999/deduct', {
+    await fetch(`http://${ip}:4999/deduct`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -63,7 +63,7 @@ export const deductScanFromDatabase = async (id) => {
 };
 
 export const closeOrder = async(ID) => {
-    await fetch('http://10.0.0.153:4999/closeOrder', {
+    await fetch(`http://${ip}:4999/closeOrder`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',

@@ -6,6 +6,7 @@ import { styles } from './styled';
 import { useDispatch } from 'react-redux';
 import { fetchTransfers } from './transfersSlice';
 import { useNavigation } from '@react-navigation/native';
+import { ip } from '../../../ipconfig';
 
 const CodeScanner = ({ definePallet, addPackage, transfers, submitTransfer, clearData }) => {
     const navigation = useNavigation()
@@ -57,7 +58,7 @@ const CodeScanner = ({ definePallet, addPackage, transfers, submitTransfer, clea
     };
 
     const checkingPallet = async (pallet) => {
-        const palletCheck = await fetch('http://10.0.0.153:4999/palletCheck', {
+        const palletCheck = await fetch(`http://${ip}:4999/palletCheck`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',

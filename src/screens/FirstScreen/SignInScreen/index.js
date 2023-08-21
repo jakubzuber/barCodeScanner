@@ -4,12 +4,13 @@ import CustomButton from '../../../components/CustomButton/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form';
 import { styles } from './styled';
+import { ip } from '../../../ipconfig';
 
 const SignInScreen = () => {
     const navigation = useNavigation();
 
     const fetchLoginData = async(username) => {
-        const returnedPassword = await fetch('http://10.0.0.153:4999/valideLogIn', {
+        const returnedPassword = await fetch(`http://${ip}:4999/valideLogIn`, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
