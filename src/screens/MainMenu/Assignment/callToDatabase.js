@@ -1,5 +1,7 @@
+import { ip } from "../../../ipconfig";
+
 export const submitPlaceAssignment = async (pallet, data) => {
-    await fetch('http://10.0.0.153:4999/submitPlace', {
+    await fetch(`http://${ip}:4999/submitPlace`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
@@ -13,7 +15,7 @@ export const submitPlaceAssignment = async (pallet, data) => {
 };
 
 export const fetchDiscription = async (pallet) => {
-    const data = await fetch('http://10.0.0.153:4999/fetchPlace', {
+    const data = await fetch(`http://${ip}:4999/fetchPlace`, {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
